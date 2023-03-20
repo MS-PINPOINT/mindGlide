@@ -7,6 +7,7 @@ import string
 import random
 import ipdb
 import shutil
+import nibabel as nb
 
 
 def generate_random_string(length):
@@ -87,8 +88,12 @@ def main(args):
         raise Exception("dataset json file does not exist: ",
                         working_dir + "/dataset_task12.json")
     # run inference
-    output_folder = "runs_" + task_id + "_fold0__mindglide/Task" + task_id + "_brain"
-    output_file = os.path.basename(image_to_segment)
+    parent_output_folder = "runs_" + task_id + "_fold0__mindglide"
+    output_folder = parent_output_folder + "/Task" + task_id + "_brain"
+    output_file = os.path.join(
+        output_folder,
+        os.path.basename(image_to_segment)
+    )
     if not ensemble_inference:
         model_path = model_paths[0]
         command = command + " --checkpoint " + model_path
@@ -104,14 +109,16 @@ def main(args):
         if result.stderr and len(result.stderr) > 0:
             print("Error:", result.stderr)
         # check if output file exists
+        seg_file = container_shared_folder_with_host + '/' + \
+            os.path.basename(image_to_segment).replace(
+                '.nii.gz', '') + '-seg0.nii.gz'
+
         if not os.path.isfile(output_file):
             raise Exception("output file does not exist: ", output_file)
         else:
-            shutil.move(output_file,
-                        container_shared_folder_with_host +
-                        os.path.basename(image_to_segment).replace('.nii.gz', '') + '-seg0.nii.gz')
+            shutil.move(output_file, seg_file)
     elif ensemble_inference:
-        all_labels = [] 
+        all_labels = []
         print("ensemble inference with ", len(model_paths), " models")
         for i, model_path in enumerate(model_paths):
             command = command + " --checkpoint " + model_path
@@ -130,11 +137,15 @@ def main(args):
             if not os.path.isfile(output_file):
                 raise Exception("output file does not exist: ", output_file)
             else:
-                shutil.move(output_file,
-                            container_shared_folder_with_host +
-                            os.path.basename(image_to_segment).replace('.nii.gz', '') +
-                            '-seg' + str(i) + '.nii.gz')
-    #clean up 
+                seg_file = container_shared_folder_with_host + '/' +\
+                    os.path.basename(image_to_segment).replace('.nii.gz', '') + \
+                    '-seg' + str(i) + '.nii.gz'
+                shutil.move(output_file, seg_file)
+                all_labels.append(nb.load(seg_file).get_fdata())
+    # clean up
+    shutil.rmtree(working_dir)
+    shutil.rmtree(parent_output_folder)
+
 
 class CustomHelpFormatter(argparse.HelpFormatter):
     def add_usage(self, usage, actions, groups, prefix=None):
