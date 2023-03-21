@@ -1,4 +1,5 @@
 #! python
+from scipy.stats import mode
 import argparse
 import json
 import subprocess
@@ -8,6 +9,8 @@ import random
 import ipdb
 import shutil
 import nibabel as nb
+import numpy as np
+from ensemble_utils import majority_vote
 
 
 def generate_random_string(length):
@@ -142,6 +145,9 @@ def main(args):
                     '-seg' + str(i) + '.nii.gz'
                 shutil.move(output_file, seg_file)
                 all_labels.append(nb.load(seg_file).get_fdata())
+    #  majority voting
+
+    result = majority_vote([array1, array2, array3])
     # clean up
     shutil.rmtree(working_dir)
     shutil.rmtree(parent_output_folder)
