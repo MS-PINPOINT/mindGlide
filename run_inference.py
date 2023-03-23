@@ -10,12 +10,26 @@ import ipdb
 import shutil
 import nibabel as nb
 import numpy as np
-from ensemble_utils import majority_vote
+from ensemble_utils import majority_vote, label_probabilities, \
+    save_probabilities_nifti, vanilla_majority_vote
+import pandas as pd
 
 
 def generate_random_string(length):
     alphanumeric_chars = string.ascii_letters + string.digits
     return ''.join(random.choice(alphanumeric_chars) for _ in range(length))
+
+
+def calculate_volumes(seg_file_path):
+    seg_img = nb.load(seg_file_path)
+    seg_data = seg_img.get_fdata()
+    voxel_volume = np.prod(seg_img.header.get_zooms())
+
+    unique_labels, counts = np.unique(seg_data, return_counts=True)
+    volumes = {round(label): voxel_volume * count for label,
+               count in zip(unique_labels, counts)}
+
+    return volumes
 
 
 def main(args):
@@ -145,12 +159,45 @@ def main(args):
                     '-seg' + str(i) + '.nii.gz'
                 shutil.move(output_file, seg_file)
                 all_labels.append(nb.load(seg_file).get_fdata())
-    #  majority voting
+        #  majority voting
+        #result = majority_vote(all_labels)
+        result = vanilla_majority_vote(all_labels)
+        seg_file = container_shared_folder_with_host + '/' +\
+            os.path.basename(image_to_segment).replace('.nii.gz', '') + \
+            '-segMajorityVoted.nii.gz'
 
-    result = majority_vote([array1, array2, array3])
+        # save with nibabel
+        img = nb.Nifti1Image(result,
+                             affine=nb.load(image_to_segment).affine,
+                             header=nb.load(image_to_segment).header)
+        img.to_filename(seg_file)
+        # probabilities
+        label_prob_file = container_shared_folder_with_host + '/' +\
+            os.path.basename(image_to_segment).replace('.nii.gz', '') + \
+            '-labelProb.nii.gz'
+
+        probabilities, unique_labels = label_probabilities(all_labels)
+        save_probabilities_nifti(
+            probabilities, image_to_segment, label_prob_file)
     # clean up
     shutil.rmtree(working_dir)
     shutil.rmtree(parent_output_folder)
+
+    # Save labels as a CSV file
+    if os.path.isfile(seg_file):
+        volumes = calculate_volumes(seg_file)
+        print("Volumes: ", volumes)
+    else:
+        raise Exception("output file does not exist: ", seg_file)
+    # Save labels as a CSV file
+    labels_dict = dataset_json['labels']
+    labels_df = pd.DataFrame(list(labels_dict.items()), columns=[
+                             'Label_ID', 'Region_Name'])
+    labels_df['Label_ID'] = labels_df['Label_ID'].astype(int)
+    labels_df['Volume'] = labels_df['Label_ID'].map(volumes)
+    csv_output_path = os.path.join(
+        container_shared_folder_with_host, 'labels.csv')
+    labels_df.to_csv(csv_output_path, index=False)
 
 
 class CustomHelpFormatter(argparse.HelpFormatter):

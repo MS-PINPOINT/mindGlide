@@ -1,1 +1,3 @@
 *.nii.*
+tmp*
+__pycache__
