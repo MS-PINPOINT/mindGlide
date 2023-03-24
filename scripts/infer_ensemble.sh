@@ -5,4 +5,4 @@ docker run --gpus all --ipc=host --ulimit memlock=-1 \
 -v /mounts/auto/arman7:/mounts/auto/arman7:shared  \
 --network=host --rm -it -e NCCL_DEBUG=INFO \
 armaneshaghi/monai:latest \
-/mounts/auto/arman7/workflows/mindGlide/infer_ensemble_from_container.sh
+/mounts/auto/arman7/workflows/mindGlide/scripts/infer_ensemble_from_container.sh

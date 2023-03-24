@@ -40,7 +40,6 @@ USER root
 #RUN conda install -c anaconda pymongo qgrid dnspython
 RUN pip install pymongo  dnspython qgrid scikit-image
 RUN pip install pytorch-ignite
-
 ##RUN wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/cuda-ubuntu2004.pin
 ##RUN mv cuda-ubuntu2004.pin /etc/apt/preferences.d/cuda-repository-pin-600
 ##RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2004/x86_64/3bf863cc.pub
@@ -49,4 +48,13 @@ RUN pip install pytorch-ignite
 ##
 ##RUN apt-get install libnccl2 libnccl-dev
 RUN pip install ipdb
+RUN pip install scipy==1.10.1
+RUN git clone https://github.com/Project-MONAI/tutorials.git /opt/monai-tutorials
+WORKDIR /opt/monai-tutorials 
+RUN ls
+RUN git checkout c501cbef2c291b4920b9a8ad3e4a67f334f79f30
+COPY  mindGlide/config/task_params.py /opt/monai-tutorials/modules/dynunet_pipeline/
+WORKDIR /mnt
+COPY ./mindGlide /opt/mindGlide
 USER $UNAME
+

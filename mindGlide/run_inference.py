@@ -35,6 +35,7 @@ def calculate_volumes(seg_file_path):
 def main(args):
     print('/mnt folder content: ', os.listdir('/mnt'))
     dynamic_unet_folder = "/mounts/auto/arman7/workflows/monai/tutorials/modules/dynunet_pipeline/"
+    dynamic_unet_folder = "/opt/monai-tutorials/modules/dynunet_pipeline/"
     container_shared_folder_with_host = '/mnt'
     # Your main function code here
     print(f"model_file_paths: {args.model_file_paths}")
