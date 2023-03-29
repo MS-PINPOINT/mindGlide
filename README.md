@@ -1,6 +1,8 @@
 # MindGlide
 
-#### MindGlide is a deep learning model for ultrafast segmentation of real-world, brain MRI scans of any modality and any quality. MindGlide does not require any extra preprocessing or postprocessing. It can be used for research applications, such as lesion segmentation, brain structure quantification, and brain atrophy analysis.
+S<mark>e</mark>g<mark>m</mark>enting clinical <mark>M</mark>R<mark>I</mark> scans of <mark>m</mark>ultiple sclerosis patients of any quality and <mark>mo</mark>dality
+
+MindGlide is a deep learning model for ultrafast segmentation of real-world, brain MRI scans of any modality and any quality. MindGlide does not require any extra preprocessing or postprocessing. It can be used for research applications, such as lesion segmentation, brain structure quantification, and brain atrophy analysis.
 
 <p align="center">
 <img src="assets/t2.png" alt="MindGlide logo" width="500" height="300">
