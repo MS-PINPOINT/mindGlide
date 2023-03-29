@@ -57,4 +57,3 @@ COPY  mindGlide/config/task_params.py /opt/monai-tutorials/modules/dynunet_pipel
 WORKDIR /mnt
 COPY ./mindGlide /opt/mindGlide
 USER $UNAME
-
