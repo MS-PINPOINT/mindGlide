@@ -57,6 +57,8 @@ RUN git checkout c501cbef2c291b4920b9a8ad3e4a67f334f79f30
 COPY  mindGlide/config/task_params.py /opt/monai-tutorials/modules/dynunet_pipeline/
 WORKDIR /mnt
 COPY ./ /opt/mindGlide
+RUN pip install nibabel
+RUN pip install ipdb 
 USER $UNAME
 COPY scripts/entrypoint.sh /entrypoint.sh 
 ENTRYPOINT [ "/entrypoint.sh" ]
