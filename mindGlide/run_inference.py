@@ -37,7 +37,6 @@ def main(args):
     #dynamic_unet_folder = "/mounts/auto/arman7/workflows/monai/tutorials/modules/dynunet_pipeline/"
     dynamic_unet_folder = "/opt/monai-tutorials/modules/dynunet_pipeline/"
     container_shared_folder_with_host = '/mnt'
-    # Your main function code here
     print(f"model_file_paths: {args.model_file_paths}")
     # see task_prams.py in the dynunet pipeline for more info
     task_id = "12"  # 12 is the task id for under MONAI's dynunet pipeline.
@@ -61,6 +60,9 @@ def main(args):
             raise Exception("model file path does not exist: ", item)
 
     image_to_segment = args.scan_path
+    if not '/mnt' in image_to_segment:
+        image_to_segment = '/mnt/' + image_to_segment
+
     print("model_paths: ", model_paths)
     print("scan to segment: ", image_to_segment)
 
@@ -166,7 +168,6 @@ def main(args):
         seg_file = container_shared_folder_with_host + '/' +\
             os.path.basename(image_to_segment).replace('.nii.gz', '') + \
             '-segMajorityVoted.nii.gz'
-
         # save with nibabel
         img = nb.Nifti1Image(result,
                              affine=nb.load(image_to_segment).affine,
@@ -182,7 +183,7 @@ def main(args):
             probabilities, image_to_segment, label_prob_file)
     # clean up
     print("cleaning up" + working_dir)
-    ipdb.set_trace()
+    # ipdb.set_trace()
     shutil.rmtree(working_dir)
     shutil.rmtree(parent_output_folder)
 

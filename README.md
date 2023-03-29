@@ -61,6 +61,22 @@ Apptainer (formerly known as Singularity). See [Apptainer](https://apptainer.org
 <img src="assets/mindGlide_logo.png" alt="MindGlide logo" width="300" height="300">
 </p>
 
+### Usage
+
+#### With Docker
+
+'''
+docker run --gpus all run \
+--gpus all --ipc=host \
+--ulimit memlock=-1 -it \
+-v $PWD:/mnt \
+armaneshaghi/mind-glide:latest test/20150610_flair.nii.gz
+'''
+
+#### With Apptainer (Singularity)
+
+Make sure that you have pulled the repository with `git lfs`
+
 ### Acknowledgements
 
 This study/project is funded by the UK National Institute for Health and Social Care (NIHR) Advanced Fellowship to Arman Eshaghi (). The views expressed are those of the author(s) and not necessarily those of the NIHR or the Department of Health and Social Care.
