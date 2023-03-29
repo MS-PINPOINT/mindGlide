@@ -34,7 +34,7 @@ def calculate_volumes(seg_file_path):
 
 def main(args):
     print('/mnt folder content: ', os.listdir('/mnt'))
-    dynamic_unet_folder = "/mounts/auto/arman7/workflows/monai/tutorials/modules/dynunet_pipeline/"
+    #dynamic_unet_folder = "/mounts/auto/arman7/workflows/monai/tutorials/modules/dynunet_pipeline/"
     dynamic_unet_folder = "/opt/monai-tutorials/modules/dynunet_pipeline/"
     container_shared_folder_with_host = '/mnt'
     # Your main function code here
@@ -181,6 +181,8 @@ def main(args):
         save_probabilities_nifti(
             probabilities, image_to_segment, label_prob_file)
     # clean up
+    print("cleaning up" + working_dir)
+    ipdb.set_trace()
     shutil.rmtree(working_dir)
     shutil.rmtree(parent_output_folder)
 

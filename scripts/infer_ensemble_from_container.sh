@@ -15,16 +15,16 @@ model_path11="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fo
 model_path12="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold2_baseline/net_key_metric=0.7579.pt"
 model_path13="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold10_baseline/net_key_metric=0.7627.pt"
 
-scan_path="/mounts/auto/arman7/workflows/mindGlide/test/20150610_flair.nii.gz"
+scan_path="/mounts/auto/arman7/workflows/mindGlide/test/20121229_t2.nii.gz"
 export PYTHONPATH="/opt/:/opt/monai:${PYTHONPATH}"
-#command="python run_inference.py  --model_file_paths  ${model_path1} ${model_path2} \
-#${model_path3} ${model_path4} ${model_path5} ${model_path6} ${model_path7} \
-#${model_path8} ${model_path9} ${model_path10} ${model_path11} ${model_path12} \
-#${model_path13} \
-#--scan_path ${scan_path}"
-command="python /opt/mindGlide/run_inference.py  --model_file_paths  ${model_path1} \
-${model_path2} \
+command="python /opt/mindGlide/run_inference.py  --model_file_paths  ${model_path1} ${model_path2} \
+${model_path3} ${model_path4} ${model_path5} ${model_path6} ${model_path7} \
+${model_path8} ${model_path9} ${model_path10} ${model_path11} ${model_path12} \
 ${model_path13} \
 --scan_path ${scan_path}"
+#command="python /opt/mindGlide/run_inference.py  --model_file_paths  ${model_path1} \
+#${model_path2} \
+#${model_path13} \
+#--scan_path ${scan_path}"
 echo $command
 $command

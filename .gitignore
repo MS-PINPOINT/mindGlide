@@ -1,3 +1,4 @@
 *.nii.*
 tmp*
 __pycache__
+*.csv
