@@ -9,7 +9,7 @@ on more than 23,000 scans from multiple sclerosis patients. MindGlide
 quantifies the volume of brain structures and lesions using by ultrafast
 segmentation on GPU hardware.
 
-## Quick Start
+## Quick Start
 
 ### Installation
 
@@ -24,6 +24,22 @@ following command will download the latest version of the models:
 
 `git lfs pull`
 
+You can use Docker or Apptainer to run the container. To start testing
+MindGlide, run the following command:
+
+```
+cd mindGlide
+docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/mind-glide:latest {name_of_nifti_file}
+```
+
+You need to replace `{name_of_nifti_file}` with the name of the NIfTI file. For example, if you want to run the test file `test.nii.gz`, you can run the following command:
+
+```
+docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/mind-glide:latest test.nii.gz
+```
+
+`test.nii.gz` will be a brain MRI file.
+
 ### Acknowledgements
 
 This study/project is funded by the UK National Institute for Health and Social Care (NIHR) Advanced Fellowship to Arman Eshaghi (). The views expressed are those of the author(s) and not necessarily those of the NIHR or the Department of Health and Social Care.
@@ -33,3 +49,7 @@ This study/project is funded by the UK National Institute for Health and Social 
 </p>
 
 Credits: Image is created by OpenAI Dall-E2.
+
+```
+
+```
