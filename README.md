@@ -42,7 +42,7 @@ docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/
 
 Docker container is used for testing the model. If you want to use the
 container on High Performance Computing (HPC) clusters, you can use
-Apptainer (formerly known as Singularity). See Apptainer documentations for details.
+Apptainer (formerly known as Singularity). See [Apptainer](https://apptainer.org/) documentations for details.
 
 ### Acknowledgements
 
