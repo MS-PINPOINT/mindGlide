@@ -1,8 +1,6 @@
 # MindGlide
 
-<p align="center">
-<img src="assets/mindGlide_logo.png" alt="MindGlide logo" width="300" height="300">
-</p>
+#### MindGlide is a deep learning model for ultrafast segmentation of real-world, brain MRI scans of any modality and any quality. MindGlide does not require any extra preprocessing or postprocessing. It can be used for research applications, such as lesion segmentation, brain structure quantification, and brain atrophy analysis.
 
 MindGlide is an open source PyTorch model built with the MONAI framework
 on more than 23,000 scans from multiple sclerosis patients. MindGlide
@@ -10,6 +8,15 @@ quantifies the volume of brain structures and lesions using by ultrafast
 segmentation on GPU hardware.
 
 ## Quick Start
+
+## Requirements
+
+You will need to install the following software:
+
+- Git
+- Docker
+- Git LFS (Large File Storage)
+- AppTainer (optional)
 
 ### Installation
 
@@ -43,6 +50,10 @@ docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/
 Docker container is used for testing the model. If you want to use the
 container on High Performance Computing (HPC) clusters, you can use
 Apptainer (formerly known as Singularity). See [Apptainer](https://apptainer.org/) documentations for details.
+
+<p align="center">
+<img src="assets/mindGlide_logo.png" alt="MindGlide logo" width="300" height="300">
+</p>
 
 ### Acknowledgements
 
