@@ -1,0 +1,11 @@
+models/model_2_net_key_metric=0.7579.pt filter=lfs diff=lfs merge=lfs -text
+models/model_3_net_key_metric=0.7717.pt filter=lfs diff=lfs merge=lfs -text
+models/model_6_net_key_metric=0.7723.pt filter=lfs diff=lfs merge=lfs -text
+models/model_8_net_key_metric=0.7489.pt filter=lfs diff=lfs merge=lfs -text
+models/model_9_net_key_metric=0.7738.pt filter=lfs diff=lfs merge=lfs -text
+models/model_0_net_key_metric=0.7627.pt filter=lfs diff=lfs merge=lfs -text
+models/model_3_net_key_metric=0.7713.pt filter=lfs diff=lfs merge=lfs -text
+models/model_4_net_key_metric=0.7645.pt filter=lfs diff=lfs merge=lfs -text
+models/model_5_net_key_metric=0.7866.pt filter=lfs diff=lfs merge=lfs -text
+models/model_7_net_key_metric=0.7634.pt filter=lfs diff=lfs merge=lfs -text
+models/model_2_net_key_metric=0.7541.pt filter=lfs diff=lfs merge=lfs -text
