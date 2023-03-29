@@ -69,12 +69,27 @@ Apptainer (formerly known as Singularity). See [Apptainer](https://apptainer.org
 docker run --gpus all \
 --ipc=host --ulimit memlock=-1 -it \
 -v $PWD:/mnt \
-armaneshaghi/mind-glide:latest test/20150610_flair.nii.gz
+armaneshaghi/mind-glide:latest test/flair.nii.gz
 ```
 
 #### With Apptainer (Singularity)
 
-Make sure that you have pulled the repository with `git lfs`
+First you need to use another Docker container to build the Apptainer or Singularity image:
+
+`docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/test:/output --privileged -it --rm  quay.io/singularity/d
+ocker2singularity armaneshaghi/mind-glide:latest`
+
+This will create a Singularity image in the `/tmp/test` directory.
+
+Then you can run the Singularity image, we assume it is called `mind-glide_latest.sif`
+which had resulted from the above step:
+
+```
+#running from the same directory as the image
+singularity run --nv \
+--bind $PWD:/mnt \
+/path/to/mind-glide_latest.sif flair.nii.gz
+```
 
 ### Acknowledgements
 
@@ -85,7 +100,3 @@ This study/project is funded by the UK National Institute for Health and Social 
 </p>
 
 Credits: Image is created by OpenAI Dall-E2.
-
-```
-
-```
