@@ -15,7 +15,7 @@ segmentation on GPU hardware.
 
 ## Quick Start
 
-## Requirements
+## Requirements
 
 You will need to install the following software:
 
@@ -65,13 +65,13 @@ Apptainer (formerly known as Singularity). See [Apptainer](https://apptainer.org
 
 #### With Docker
 
-'''
+```
 docker run --gpus all run \
 --gpus all --ipc=host \
 --ulimit memlock=-1 -it \
 -v $PWD:/mnt \
 armaneshaghi/mind-glide:latest test/20150610_flair.nii.gz
-'''
+```
 
 #### With Apptainer (Singularity)
 
