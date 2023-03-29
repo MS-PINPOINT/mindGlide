@@ -2,6 +2,11 @@
 
 #### MindGlide is a deep learning model for ultrafast segmentation of real-world, brain MRI scans of any modality and any quality. MindGlide does not require any extra preprocessing or postprocessing. It can be used for research applications, such as lesion segmentation, brain structure quantification, and brain atrophy analysis.
 
+<p align="center">
+<img src="assets/t2.png" alt="MindGlide logo" width="300" height="300">
+</p>
+
+
 MindGlide is an open source PyTorch model built with the MONAI framework
 on more than 23,000 scans from multiple sclerosis patients. MindGlide
 quantifies the volume of brain structures and lesions using by ultrafast
