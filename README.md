@@ -40,6 +40,10 @@ docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/
 
 `test.nii.gz` will be a brain MRI file.
 
+Docker container is used for testing the model. If you want to use the
+container on High Performance Computing (HPC) clusters, you can use
+Apptainer (formerly known as Singularity). See Apptainer documentations for details.
+
 ### Acknowledgements
 
 This study/project is funded by the UK National Institute for Health and Social Care (NIHR) Advanced Fellowship to Arman Eshaghi (). The views expressed are those of the author(s) and not necessarily those of the NIHR or the Department of Health and Social Care.
