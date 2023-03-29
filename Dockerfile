@@ -1,5 +1,5 @@
-#FROM nvcr.io/nvidia/kaldi:22.04-py3
-FROM nvcr.io/nvidia/pytorch:23.01-py3
+#FROM nvcr.io/nvidia/pytorch:23.01-py3
+FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-devel
 #FROM nvcr.io/nvidia/kaldi:22.12-py3
 ENV DEBIAN_FRONTEND=noninteractive
 ARG USER_ID
@@ -8,8 +8,9 @@ ARG UNAME
 RUN groupadd -g $GROUP_ID -o $UNAME
 RUN useradd -m -u $USER_ID -g $GROUP_ID -o -s /bin/bash $UNAME
 USER root
-RUN apt-get update 
-RUN apt-get install wget
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
+RUN apt-get update --allow-unauthenticated
+RUN apt-get install -y git
 WORKDIR /opt
 #ENV PATH="/opt/miniconda3/bin:${PATH}"
 #ARG PATH="/opt/miniconda3/bin:${PATH}"
@@ -18,7 +19,7 @@ WORKDIR /opt
 #    &&  rm -vf Miniconda3-py39_4.11.0-Linux-x86_64.sh
 #RUN conda install -y pytorch torchvision -c pytorch 
 #RUN python -c 'import torch;print(torch.backends.cudnn.version())'
-RUN apt-get install git
+#RUN apt-get install git
 RUN git clone https://github.com/Project-MONAI/MONAI.git  /opt/monai
 WORKDIR /opt/monai
 RUN git checkout b7403ee5a91caef158181a9dcc2b9b1453f9dbdd
@@ -55,5 +56,7 @@ RUN ls
 RUN git checkout c501cbef2c291b4920b9a8ad3e4a67f334f79f30
 COPY  mindGlide/config/task_params.py /opt/monai-tutorials/modules/dynunet_pipeline/
 WORKDIR /mnt
-COPY ./mindGlide /opt/mindGlide
+COPY ./ /opt/mindGlide
 USER $UNAME
+COPY scripts/entrypoint.sh /entrypoint.sh 
+ENTRYPOINT [ "/entrypoint.sh" ]
