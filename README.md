@@ -93,7 +93,10 @@ singularity run --nv \
 
 ### Acknowledgements
 
-This study/project is funded by the UK National Institute for Health and Social Care (NIHR) Advanced Fellowship to Arman Eshaghi (). The views expressed are those of the author(s) and not necessarily those of the NIHR or the Department of Health and Social Care.
+This study/project is funded by the UK National Institute for Health and Social Care (NIHR)
+Advanced Fellowship to Arman Eshaghi (Award ID: NIHR302495).
+The views expressed are those of the author(s) and not necessarily
+those of the NIHR or the Department of Health and Social Care.
 
 <p align="left">
 <img src="assets/nihr_logo.png" alt="NIHR logo" >
