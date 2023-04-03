@@ -4,20 +4,16 @@ import argparse
 import json
 import subprocess
 import os
-import string
-import random
 import ipdb
 import shutil
 import nibabel as nb
 import numpy as np
-from ensemble_utils import majority_vote, label_probabilities, \
-    save_probabilities_nifti, vanilla_majority_vote
+from ensemble_utils import label_probabilities, \
+    save_probabilities_nifti, vanilla_majority_vote, \
+    generate_random_string
+
+
 import pandas as pd
-
-
-def generate_random_string(length):
-    alphanumeric_chars = string.ascii_letters + string.digits
-    return ''.join(random.choice(alphanumeric_chars) for _ in range(length))
 
 
 def calculate_volumes(seg_file_path):
