@@ -1,6 +1,8 @@
 import argparse
+import json
 import os
 from ensemble_utils import generate_random_string
+import shutil
 
 container_shared_folder_with_host = "/mnt/"
 
@@ -10,16 +12,14 @@ def main(model_weight,
     # Your code to load the model with the weights and process the dataset
     print(f"Model weights: {model_weight}")
     print(f"Image list: {image_list}")
+    print(f"Lablel list: {label_list}")
     train_fold0 = []
     for img, lbl in zip(image_list, label_list):
         train_fold0.append({'image': img,
                             'label': lbl})
-
     working_dir = container_shared_folder_with_host + \
         "/tmpMINDGLIDE" + \
         generate_random_string(10)
-
-    model_paths = args.model_file_paths
 
     dynamic_unet_folder = "/opt/monai-tutorials/modules/dynunet_pipeline/"
     lr = 0.0001
@@ -52,8 +52,11 @@ def main(model_weight,
                                '19': 'Ventral_dc'},
                     'numTest': 1,
                     'numTraining': len(image_list),
+                    "training": train_fold0,
                     'train_fold0': train_fold0
                     }
+    with open(working_dir + "/dataset_12.json", 'w') as f:
+        json.dump(dataset_json, f)
 
     command = dynamic_unet_folder + "/train.py \
          -train_num_workers 4 -interval 1 -num_samples 3  \
@@ -64,6 +67,9 @@ def main(model_weight,
          -tta_val False --datalist_path \
           ${working_dir} --fold 0 \
             -checkpoint ${MOST_RECENT_WEIGHT_FILE}"
+    print(command)
+    os.system(command)
+    shutil.rmtree(working_dir)
 
 
 if __name__ == "__main__":
