@@ -9,6 +9,7 @@ def main(model_weight,
          image_list, label_list):
     # Your code to load the model with the weights and process the dataset
     print(f"Model weights: {model_weight}")
+    print(f"Image list: {image_list}")
     train_fold0 = []
     for img, lbl in zip(image_list, label_list):
         train_fold0.append({'image': img,
@@ -63,6 +64,7 @@ def main(model_weight,
          -tta_val False --datalist_path \
           ${working_dir} --fold 0 \
             -checkpoint ${MOST_RECENT_WEIGHT_FILE}"
+
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(
