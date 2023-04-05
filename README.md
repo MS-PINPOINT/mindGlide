@@ -91,6 +91,14 @@ singularity run --nv \
 /path/to/mind-glide_latest.sif flair.nii.gz
 ```
 
+### Modifications
+
+If you want to run the Docker container using your own trained model or use
+a custom script, please make sure you overwrite teh `entrypoint`. For example,
+to run bash and get into the container, you can run the following command:
+
+`docker run -it --entrypoint bash armaneshaghi/mind-glide:latest`
+
 ### Acknowledgements
 
 This study/project is funded by the UK National Institute for Health and Social Care (NIHR)
