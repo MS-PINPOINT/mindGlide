@@ -6,21 +6,31 @@ import shutil
 
 container_shared_folder_with_host = "/mnt/"
 
+os.environ["MKL_THREADING_LAYER"] = "GNU"
+
 
 def main(model_weight,
-         image_list, label_list):
+         training_image_list, training_label_list,
+         validation_image_list,
+         validation_label_list):
     # Your code to load the model with the weights and process the dataset
     print(f"Model weights: {model_weight}")
-    print(f"Image list: {image_list}")
-    print(f"Lablel list: {label_list}")
+    print(f"Training Image list: {training_image_list}")
+    print(f"Training Label list: {training_label_list}")
     train_fold0 = []
-    for img, lbl in zip(image_list, label_list):
+    validation_fold0 = []
+    for img, lbl in zip(training_image_list, training_label_list):
         train_fold0.append({'image': img,
                             'label': lbl})
+    for img, lbl in zip(validation_image_list, validation_label_list):
+        validation_fold0.append({'image': img,
+                                 'label': lbl})
     working_dir = container_shared_folder_with_host + \
         "/tmpMINDGLIDE" + \
         generate_random_string(10)
-
+    if not os.path.exists(working_dir):
+        os.mkdir(working_dir)
+        print("Created working directory: ", working_dir)
     dynamic_unet_folder = "/opt/monai-tutorials/modules/dynunet_pipeline/"
     lr = 0.0001
     dataset_json = {'name': 'MindGlide',
@@ -51,25 +61,29 @@ def main(model_weight,
                                '18': 'Lesion',
                                '19': 'Ventral_dc'},
                     'numTest': 1,
-                    'numTraining': len(image_list),
+                    'numTraining': len(training_image_list),
                     "training": train_fold0,
-                    'train_fold0': train_fold0
+                    'train_fold0': train_fold0,
+                    'validation_fold0': validation_fold0
                     }
-    with open(working_dir + "/dataset_12.json", 'w') as f:
+    with open(working_dir + "/dataset_task12.json", 'w') as f:
         json.dump(dataset_json, f)
-
-    command = dynamic_unet_folder + "/train.py \
-         -train_num_workers 4 -interval 1 -num_samples 3  \
-          --task_id 12 --root_dir ${working_dir} \
-          -learning_rate ${lr} \
-             -max_epochs 100 \
-            -pos_sample_num 2 -expr_name _mindglide \
-         -tta_val False --datalist_path \
-          ${working_dir} --fold 0 \
-            -checkpoint ${MOST_RECENT_WEIGHT_FILE}"
+    epochs = 3
+    command = ('python ' + dynamic_unet_folder + "/train.py "
+               f"-train_num_workers 4 -interval 1 -num_samples 3 "
+               f" --task_id 12 --root_dir {working_dir} "
+               f"-learning_rate {lr} "
+               f" -max_epochs {epochs}"
+               f" -pos_sample_num 2 -expr_name _mindglide "
+               f" -tta_val False --datalist_path "
+               f" {working_dir} --fold 0 "
+               f"-checkpoint {model_weight}")
     print(command)
     os.system(command)
     shutil.rmtree(working_dir)
+
+    output_dir = "/mnt/runs_12_fold0__mindglide"
+    shutil.move(output_dir, 'fine_tuning_output')
 
 
 if __name__ == "__main__":
@@ -84,14 +98,29 @@ if __name__ == "__main__":
     )
 
     parser.add_argument(
-        "--image_list",
+        "--training_image_list",
         type=str,
         nargs='+',
         required=True,
         help="List of image paths (strings)",
     )
     parser.add_argument(
-        "--label_list",
+        "--training_label_list",
+        type=str,
+        nargs='+',
+        required=True,
+        help="List of label paths (strings) corresponding to the images",
+    )
+
+    parser.add_argument(
+        "--validation_image_list",
+        type=str,
+        nargs='+',
+        required=True,
+        help="List of image paths (strings)",
+    )
+    parser.add_argument(
+        "--validation_label_list",
         type=str,
         nargs='+',
         required=True,
@@ -105,4 +134,6 @@ if __name__ == "__main__":
         exit(1)
 
     main(args.model_weight,
-         args.image_list, args.label_list)
+         args.training_image_list, args.training_label_list,
+         args.validation_image_list,
+         args.validation_label_list)

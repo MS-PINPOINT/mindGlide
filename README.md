@@ -91,6 +91,13 @@ singularity run --nv \
 /path/to/mind-glide_latest.sif flair.nii.gz
 ```
 
+### fine tuning
+
+MindGlide models can be fine-tuned on your own data. Fine tuning is
+useful when you are not getting the desired results on your data. You
+can fine tune the model on your data by starting from the scripts in the
+`scripts` directory.
+
 ### Modifications
 
 If you want to run the Docker container using your own trained model or use

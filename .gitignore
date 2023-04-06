@@ -4,3 +4,4 @@ __pycache__
 *.csv
 *.sif
 runs_*
+fine_tuning_output
