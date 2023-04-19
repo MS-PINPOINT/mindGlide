@@ -1,27 +1,33 @@
-#!/bin/bash
-#model_path1="/opt/mindGlide/models/model_0_net_key_metric=0.7627.pt"
-#model_path2="/opt/mindGlide/models/model_2_net_key_metric=0.7541.pt"
-#model_path3="/opt/mindGlide/models/model_2_net_key_metric=0.7579.pt"
-#model_path4="/opt/mindGlide/models/model_3_net_key_metric=0.7713.pt"
-#model_path5="/opt/mindGlide/models/model_3_net_key_metric=0.7717.pt"
-#model_path6="/opt/mindGlide/models/model_4_net_key_metric=0.7645.pt"
-#model_path7="/opt/mindGlide/models/model_5_net_key_metric=0.7866.pt"
-#model_path8="/opt/mindGlide/models/model_6_net_key_metric=0.7723.pt"
-#model_path9="/opt/mindGlide/models/model_7_net_key_metric=0.7634.pt"
-model_path10="/opt/mindGlide/models/model_8_net_key_metric=0.7489.pt"
-model_path11="/opt/mindGlide/models/model_9_net_key_metric=0.7738.pt"
+# please replace the weight variable into your actual weight
+echo "working directory is:"
+pwd
+model_path1="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold13_baseline/net_key_metric=0.7713.pt"
+model_path2="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold5_baseline/net_key_metric=0.7866.pt"
+model_path3="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold14_baseline/net_key_metric=0.7645.pt"
+model_path4="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold8_baseline/net_key_metric=0.7489.pt"
+modal_path5="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold11_baseline/net_key_metric=0.7637.pt"
+model_path6="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold6_baseline/net_key_metric=0.7723.pt"
+model_path7="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold3_baseline/net_key_metric=0.7717.pt"
+model_path8="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold14_baseline/net_key_metric=0.7645.pt"
+model_path9="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold7_baseline/net_key_metric=0.7634.pt"
+model_path10="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold9_baseline/net_key_metric=0.7738.pt"
+model_path11="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold12_baseline/net_key_metric=0.7541.pt"
+model_path12="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold2_baseline/net_key_metric=0.7579.pt"
+model_path13="/mounts/auto/arman7/training_files/inference/_20/models/runs_12_fold10_baseline/net_key_metric=0.7627.pt"
 
-model_path1="/mounts/auto/arman7/workflows/mindGlide/fine_tuning_output/runs_12_fold0__mindglide/net_key_metric=0.6421.pt"
-model_path1="/mounts/auto/arman7/workflows/mindGlide/models/fine_tuned_on_cs_cluster.pt"
-scan_path="./test/hcp_t2.nii.gz"
+scan_path="/mounts/auto/arman7/workflows/mindGlide/test/20150610_flair.nii.gz"
 export PYTHONPATH="/opt/:/opt/monai:${PYTHONPATH}"
-#command="python /opt/mindGlide/mindGlide/run_inference.py  --model_file_paths  ${model_path1} ${model_path2} \
+#command="python run_inference.py  --model_file_paths  ${model_path1} ${model_path2} \
+
 #${model_path3} ${model_path4} ${model_path5} ${model_path6} ${model_path7} \
 #${model_path8} ${model_path9} ${model_path10} ${model_path11} ${model_path12} \
 #${model_path13} \
 #--scan_path ${scan_path}"
-command="python /opt/mindGlide/mindGlide/run_inference.py  \
---model_file_paths  ${model_path11} ${model_path10} \
+
+command="python /opt/mindGlide/run_inference.py  --model_file_paths  ${model_path1} \
+${model_path2} \
+${model_path13} \
+
 --scan_path ${scan_path}"
 echo $command
 $command
