@@ -32,7 +32,7 @@ def main(model_weight,
         os.mkdir(working_dir)
         print("Created working directory: ", working_dir)
     dynamic_unet_folder = "/opt/monai-tutorials/modules/dynunet_pipeline/"
-    lr = 0.0001
+    lr = 0.00001
     dataset_json = {'name': 'MindGlide',
                     'description': 'segments any modality into CGM, DGM and a few others',
                     'reference': 'MindGlide',
@@ -68,7 +68,7 @@ def main(model_weight,
                     }
     with open(working_dir + "/dataset_task12.json", 'w') as f:
         json.dump(dataset_json, f)
-    epochs = 3
+    epochs = 10
     command = ('python ' + dynamic_unet_folder + "/train.py "
                f"-train_num_workers 4 -interval 1 -num_samples 3 "
                f" --task_id 12 --root_dir {working_dir} "
@@ -130,7 +130,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not os.path.isfile(args.model_weight):
-        print(f"Error: model_weights file not found at {args.model_weights}")
+        print(f"Error: model_weights file not found at {args.model_weight}")
         exit(1)
 
     main(args.model_weight,
