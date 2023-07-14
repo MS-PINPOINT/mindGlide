@@ -76,8 +76,7 @@ armaneshaghi/mind-glide:latest test/flair.nii.gz
 
 First you need to use another Docker container to build the Apptainer or Singularity image:
 
-`docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/test:/output --privileged -it --rm  quay.io/singularity/d
-ocker2singularity armaneshaghi/mind-glide:latest`
+`docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/test:/output --privileged -it --rm  quay.io/singularity/docker2singularity armaneshaghi/mind-glide:latest`
 
 This will create a Singularity image in the `/tmp/test` directory.
 
