@@ -76,8 +76,7 @@ armaneshaghi/mind-glide:latest test/flair.nii.gz
 
 First you need to use another Docker container to build the Apptainer or Singularity image:
 
-`docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/test:/output --privileged -it --rm  quay.io/singularity/d
-ocker2singularity armaneshaghi/mind-glide:latest`
+`docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/test:/output --privileged -it --rm  quay.io/singularity/docker2singularity armaneshaghi/mind-glide:latest`
 
 This will create a Singularity image in the `/tmp/test` directory.
 
@@ -91,9 +90,47 @@ singularity run --nv \
 /path/to/mind-glide_latest.sif flair.nii.gz
 ```
 
+### fine tuning
+
+MindGlide models can be fine-tuned on your own data. Fine tuning is useful when you are not getting the desired results on your data. You can fine tune the model on your data by starting from the scripts in the
+`scripts` directory.
+
+_Parameters for fine tuning_: The shipped models with the repo are trained a learning rate (lR)
+of 0.01 . If you want to fine tune the model on your data, you can start with a lower learning rate, such as 0.001. Using the same learning rate as the shipped models may result in **catastrophic forgetting**.
+
+### Modifications
+
+If you want to run the Docker container using your own trained model or use
+a custom script, please make sure you overwrite teh `entrypoint`. For example,
+to run bash and get into the container, you can run the following command:
+
+`docker run -it --entrypoint bash armaneshaghi/mind-glide:latest`
+
+### shared models
+
+Several trained models are shared in the `models` directory.
+They are trained on the datasets explained in the paper (link to be added upon publication).
+
+Tailored models for extermely low quality data, that is MRI data with disproportionate small FOV, and large gaps between
+slices are shared separetly. The following table provides
+more information about the models:
+
+| Model name and path in the models directory | Description | Dataset | Link |
+| /opt/mindGlide/models/model_0_net_key_metric=0.7627.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/model_2_net_key_metric=0.7541.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/model_2_net_key_metric=0.7579.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/model_3_net_key_metric=0.7713.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/model_3_net_key_metric=0.7717.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/model_4_net_key_metric=0.7645.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/model_5_net_key_metric=0.7866.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/model_6_net_key_metric=0.7723.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/model_7_net_key_metric=0.7634.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/model_8_net_key_metric=0.7489.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/model_9_net_key_metric=0.7738.pt | trained on dataset 1 | IPMSA |
+
 ### Acknowledgements
 
-This study/project is funded by the UK National Institute for Health and Social Care (NIHR) Advanced Fellowship to Arman Eshaghi (). The views expressed are those of the author(s) and not necessarily those of the NIHR or the Department of Health and Social Care.
+This study/project is funded by the UK National Institute for Health and Social Care (NIHR) Advanced Fellowship to Arman Eshaghi (Award ID: NIHR302495). The views expressed are those of the author(s) and not necessarily those of the NIHR or the Department of Health and Social Care.
 
 <p align="left">
 <img src="assets/nihr_logo.png" alt="NIHR logo" >

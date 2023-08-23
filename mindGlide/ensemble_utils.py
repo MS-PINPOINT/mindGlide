@@ -2,6 +2,8 @@ import nibabel as nib
 import numpy as np
 from scipy.stats import mode
 import random
+import string
+import random
 
 
 def custom_mode(arr):
@@ -10,6 +12,11 @@ def custom_mode(arr):
     max_count = np.max(counts)
     max_count_elements = unique_elements[counts == max_count]
     return random.choice(max_count_elements)
+
+
+def generate_random_string(length):
+    alphanumeric_chars = string.ascii_letters + string.digits
+    return ''.join(random.choice(alphanumeric_chars) for _ in range(length))
 
 
 def majority_vote(arrays):
