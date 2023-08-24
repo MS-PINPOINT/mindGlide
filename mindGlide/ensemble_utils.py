@@ -22,9 +22,14 @@ def generate_random_string(length):
 def majority_vote(arrays):
     # Stack input arrays along a new axis
     stacked_arrays = np.stack(arrays, axis=-1)
-    # Calculate the custom mode along the new axis and return the result
-    result = np.apply_along_axis(custom_mode, axis=-1, arr=stacked_arrays)
-    return result
+    
+    # Calculate the custom mode along the new axis
+    float_result = np.apply_along_axis(custom_mode, axis=-1, arr=stacked_arrays)
+    
+    # Round to the nearest integer and store as int
+    int_result = np.round(float_result).astype(int)
+    
+    return int_result
 
 
 def label_probabilities(arrays):
