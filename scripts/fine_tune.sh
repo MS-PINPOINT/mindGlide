@@ -5,5 +5,6 @@ docker run --gpus all --ipc=host --ulimit memlock=-1 \
 -v /mounts/auto/arman7:/mounts/auto/arman7:shared  \
 --network=host --rm -it -e NCCL_DEBUG=INFO \
 --entrypoint /mounts/auto/arman7/workflows/mindGlide/scripts/fine_tune_from_container.sh \
-armaneshaghi/mind-glide:latest 
+armaneshaghi/mind-glide:debug
+#armaneshaghi/mind-glide:latest 
 
