@@ -4,6 +4,8 @@ import os
 from ensemble_utils import generate_random_string
 import shutil
 
+import ipdb
+
 container_shared_folder_with_host = "/mnt/"
 
 os.environ["MKL_THREADING_LAYER"] = "GNU"
@@ -68,7 +70,7 @@ def main(model_weight,
                     }
     with open(working_dir + "/dataset_task12.json", 'w') as f:
         json.dump(dataset_json, f)
-    epochs = 3
+    epochs = 2
     command = ('python ' + dynamic_unet_folder + "/train.py "
                f"-train_num_workers 4 -interval 1 -num_samples 3 "
                f" --task_id 12 --root_dir {working_dir} "
@@ -81,9 +83,15 @@ def main(model_weight,
     print(command)
     os.system(command)
     shutil.rmtree(working_dir)
-
+    #
+    # ipdb.set_trace()
     output_dir = "/mnt/runs_12_fold0__mindglide"
-    shutil.move(output_dir, 'fine_tuning_output')
+    if not os.path.exists(output_dir):
+        # throw error
+        print("Error: output directory not found at ", output_dir)
+    else:
+        date = output_dir.split("_")[-1]
+        shutil.move(output_dir, 'fine_tuning_output_' + date)
 
 
 if __name__ == "__main__":
