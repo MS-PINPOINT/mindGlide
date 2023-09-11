@@ -117,21 +117,21 @@ slices are shared separetly. The following table provides
 more information about the models:
 
 | Model name and path in the models directory | Description | Dataset | Link |
-| /opt/mindGlide/models/model_0_net_key_metric=0.7627.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_2_net_key_metric=0.7541.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_2_net_key_metric=0.7579.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_3_net_key_metric=0.7713.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_3_net_key_metric=0.7717.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_4_net_key_metric=0.7645.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_5_net_key_metric=0.7866.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_6_net_key_metric=0.7723.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_7_net_key_metric=0.7634.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_8_net_key_metric=0.7489.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_9_net_key_metric=0.7738.pt | trained on dataset 1 | IPMSA |
+| model_0_net_key_metric=0.7627.pt | trained on dataset 1 | IPMSA |
+| model_2_net_key_metric=0.7541.pt | trained on dataset 1 | IPMSA |
+| model_2_net_key_metric=0.7579.pt | trained on dataset 1 | IPMSA |
+| model_3_net_key_metric=0.7713.pt | trained on dataset 1 | IPMSA |
+| model_3_net_key_metric=0.7717.pt | trained on dataset 1 | IPMSA |
+| model_4_net_key_metric=0.7645.pt | trained on dataset 1 | IPMSA |
+| model_5_net_key_metric=0.7866.pt | trained on dataset 1 | IPMSA |
+| model_6_net_key_metric=0.7723.pt | trained on dataset 1 | IPMSA |
+| model_7_net_key_metric=0.7634.pt | trained on dataset 1 | IPMSA |
+| model_8_net_key_metric=0.7489.pt | trained on dataset 1 | IPMSA |
+| model_9_net_key_metric=0.7738.pt | trained on dataset 1 | IPMSA |
 
 ### Acknowledgements
 
-This study/project is funded by the UK National Institute for Health and Social Care (NIHR) Advanced Fellowship to Arman Eshaghi (Award ID: NIHR302495). The views expressed are those of the author(s) and not necessarily those of the NIHR or the Department of Health and Social Care.
+This study/project is funded by the UK National Institute for Health and Social Care (NIHR) Advanced Fellowship to Arman Eshaghi (Award ID: NIHR302495). The views expressed are those of the author(s) and not necessarily those of the NIHR or the Department of Health and Social Care. This project has received funding from the Progressive Multiple Sclerosis Alliance (PMSA, `www.progressivemsalliance.org`).
 
 <p align="left">
 <img src="assets/nihr_logo.png" alt="NIHR logo" >
