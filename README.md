@@ -42,13 +42,13 @@ MindGlide, run the following command:
 
 ```
 cd mindGlide
-docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/mind-glide:latest {name_of_nifti_file}
+docker run -it --rm -v $(pwd):/mnt -w /mnt armaneshaghi/mind-glide:latest {name_of_nifti_file}
 ```
 
 You need to replace `{name_of_nifti_file}` with the name of the NIfTI file. For example, if you want to run the test file `test.nii.gz`, you can run the following command:
 
 ```
-docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/mind-glide:latest test.nii.gz
+docker run -it --rm -v $(pwd):/mnt -w /mnt armaneshaghi/mind-glide:latest test.nii.gz
 ```
 
 `test.nii.gz` will be a brain MRI file.
