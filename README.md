@@ -115,7 +115,8 @@ Tailored models for extermely low quality data, that is MRI data with disproport
 slices are shared separetly. The following table provides
 more information about the models:
 
-| Model name and path in the models directory | Description | Dataset | Link |
+| Model name and path in the models directory | Description | Dataset |
+|-|-|-|
 | /opt/mindGlide/models/model_0_net_key_metric=0.7627.pt | trained on dataset 1 | IPMSA |
 | /opt/mindGlide/models/model_2_net_key_metric=0.7541.pt | trained on dataset 1 | IPMSA |
 | /opt/mindGlide/models/model_2_net_key_metric=0.7579.pt | trained on dataset 1 | IPMSA |
