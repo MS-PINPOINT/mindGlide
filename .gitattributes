@@ -9,3 +9,4 @@ models/model_4_net_key_metric=0.7645.pt filter=lfs diff=lfs merge=lfs -text
 models/model_5_net_key_metric=0.7866.pt filter=lfs diff=lfs merge=lfs -text
 models/model_7_net_key_metric=0.7634.pt filter=lfs diff=lfs merge=lfs -text
 models/model_2_net_key_metric=0.7541.pt filter=lfs diff=lfs merge=lfs -text
+*.pt filter=lfs diff=lfs merge=lfs -text
