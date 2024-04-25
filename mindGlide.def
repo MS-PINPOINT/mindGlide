@@ -1,0 +1,44 @@
+BootStrap: docker
+From: pytorch/pytorch:1.11.0-cuda11.3-cudnn8-devel
+
+%files
+    requirements.txt /
+    mindGlide/config/task_params.py /
+    scripts/entrypoint.sh /
+    assets /opt/mindGlide/assets
+    data /opt/mindGlide/data
+    LICENSE /opt/mindGlide/LICENSE
+    mindGlide /opt/mindGlide/mindGlide
+    models /opt/mindGlide/models
+    README.md /opt/mindGlide/README.md
+    scripts /opt/mindGlide/scripts
+
+%post
+    export DEBIAN_FRONTEND=noninteractive
+    apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
+    apt-get update --allow-unauthenticated
+    apt-get install -y git
+    pip install --upgrade pip
+    pip install -r /requirements.txt
+    git clone https://github.com/Project-MONAI/MONAI.git /opt/monai
+    cd /opt/monai
+    git checkout b7403ee5a91caef158181a9dcc2b9b1453f9dbdd
+    python setup.py install
+    git clone https://github.com/Project-MONAI/tutorials.git /opt/monai-tutorials
+    cd /opt/monai-tutorials 
+    git checkout c501cbef2c291b4920b9a8ad3e4a67f334f79f30
+    mv /task_params.py /opt/monai-tutorials/modules/dynunet_pipeline/
+    cd /mnt
+    chmod 755 /entrypoint.sh
+    find /opt/monai -type d -exec chmod ugo+rx {} \;
+    find /opt/monai -type f -exec chmod ugo+r {} \;
+    find /opt/monai-tutorials -type d -exec chmod ugo+rx {} \;
+    find /opt/monai-tutorials -type f -exec chmod ugo+r {} \;
+    find /opt/mindGlide -type d -exec chmod ugo+rx {} \;
+    find /opt/mindGlide -type f -exec chmod ugo+r {} \;
+
+%environment
+    PATH=/opt/miniconda3/bin:$PATH
+
+%runscript
+    /entrypoint.sh "$@"
