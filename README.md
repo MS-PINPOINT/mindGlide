@@ -13,7 +13,7 @@ on more than 23,000 scans from multiple sclerosis patients. MindGlide
 quantifies the volume of brain structures and lesions using by ultrafast
 segmentation on GPU hardware.
 
-## Quick Start
+## Quick start
 
 ## Requirements
 
@@ -90,7 +90,7 @@ singularity run --nv \
 /path/to/mind-glide_latest.sif flair.nii.gz
 ```
 
-### fine tuning
+### Fine tuning
 
 MindGlide models can be fine-tuned on your own data. Fine tuning is useful when you are not getting the desired results on your data. You can fine tune the model on your data by starting from the scripts in the
 `scripts` directory.
@@ -106,7 +106,7 @@ to run bash and get into the container, you can run the following command:
 
 `docker run -it --entrypoint bash armaneshaghi/mind-glide:latest`
 
-### shared models
+### Shared models
 
 Several trained models are shared in the `models` directory.
 They are trained on the datasets explained in the paper (link to be added upon publication).
@@ -115,7 +115,8 @@ Tailored models for extermely low quality data, that is MRI data with disproport
 slices are shared separetly. The following table provides
 more information about the models:
 
-| Model name and path in the models directory | Description | Dataset | Link |
+| Model name and path in the models directory | Description | Dataset |
+|-|-|-|
 | /opt/mindGlide/models/model_0_net_key_metric=0.7627.pt | trained on dataset 1 | IPMSA |
 | /opt/mindGlide/models/model_2_net_key_metric=0.7541.pt | trained on dataset 1 | IPMSA |
 | /opt/mindGlide/models/model_2_net_key_metric=0.7579.pt | trained on dataset 1 | IPMSA |
