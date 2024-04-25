@@ -76,16 +76,16 @@ def main(args):
                     'modality': {'0': 'receives only one and any modality.'},
                     'labels': {'0': 'Background',
                                '1': 'CSF',
-                               '2': 'Ventricle',
+                               '2': 'Ventricles_3_4_5',
                                '3': 'DGM',
                                '4': 'Pons',
-                               '5': 'Brain_stem',
+                               '5': 'Brainstem',
                                '6': 'Cerebellum',
                                '7': 'Temporal_lobe',
-                               '8': 'Ventricle',
-                               '9': 'Lateral_Ventricle',
-                               '10': 'Optic_Chiasm',
-                               '11': 'Cerebellum',
+                               '8': 'Temporal_horn_lateral_ventricle',
+                               '9': 'Lateral_ventricle',
+                               '10': 'Optic_chiasm',
+                               '11': 'Cerebellar_vermis',
                                '13': 'White_matter',
                                '12': 'Corpus_callosum',
                                '14': 'Frontal_lobe_GM',
@@ -93,7 +93,7 @@ def main(args):
                                '16': 'Parietal_lobe_GM',
                                '17': 'Occipital_lobe_GM',
                                '18': 'Lesion',
-                               '19': 'Ventral_dc'},
+                               '19': 'Ventral_diencephalon'},
                     'numTest': 1,
                     'numTraining': 0,
                     'test': [{'image': image_to_segment}]
@@ -127,7 +127,7 @@ def main(args):
         # check if output file exists
         seg_file = container_shared_folder_with_host + '/' + \
             os.path.basename(image_to_segment).replace(
-                '.nii.gz', '') + '-seg0.nii.gz'
+                '.nii.gz', '') + '-seg.nii.gz'
 
         if not os.path.isfile(output_file):
             raise Exception("output file does not exist: ", output_file)
