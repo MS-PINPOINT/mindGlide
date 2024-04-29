@@ -128,6 +128,24 @@ more information about the models:
 | /opt/mindGlide/models/model_7_net_key_metric=0.7634.pt | trained on dataset 1 | IPMSA |
 | /opt/mindGlide/models/model_8_net_key_metric=0.7489.pt | trained on dataset 1 | IPMSA |
 | /opt/mindGlide/models/model_9_net_key_metric=0.7738.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/_20240404_conjurer_trained_dice_7733.pt | trained on dataset 1 (This model is 10 times larger than the previous models) | IPMSA |
+
+### 📬 Citation
+
+If you use MindGlide please cite this paper:
+
+```bibtex
+@article {Goebl2024.03.29.24305083,
+	author = {Philipp Goebl and Jed Wingrove and Omar Abdelmannan and Barbara Brito Vega and Jonathan Stutters and Silvia Da Graca Ramos and Owain Kenway and Thomas Rosoor and Evangeline Wassmer and Jeremy Chataway and Douglas Arnold and Louis Collins and Cheryl Hemmingway and Sridar Narayanan and Declan Chard and Juan Eugenio Iglesias and Frederik Barkhof and Yael Hacohen and Alan Thompson and Daniel Alexander and Olga Ciccarelli and Arman Eshaghi},
+	title = {Repurposing Clinical MRI Archives for Multiple Sclerosis Research with a Flexible, Single-Modality Approach: New Insights from Old Scans},
+	elocation-id = {2024.03.29.24305083},
+	year = {2024},
+	doi = {10.1101/2024.03.29.24305083},
+	URL = {https://www.medrxiv.org/content/early/2024/03/30/2024.03.29.24305083},
+	eprint = {https://www.medrxiv.org/content/early/2024/03/30/2024.03.29.24305083.full.pdf},
+	journal = {medRxiv}
+}
+
 
 ### Acknowledgements
 
