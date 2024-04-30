@@ -5,7 +5,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ARG USER_ID
 ARG GROUP_ID
 ARG UNAME
-RUN groupadd -g $GROUP_ID -o $USERNAME
+RUN groupadd -g $GROUP_ID -o user
 RUN useradd -m -u $USER_ID -g $GROUP_ID -o -s /bin/bash $UNAME
 USER root
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
