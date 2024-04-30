@@ -8,7 +8,9 @@ ARG UNAME
 RUN groupadd -g $GROUP_ID -o user
 RUN useradd -m -u $USER_ID -g $GROUP_ID -o -s /bin/bash $UNAME
 USER root
-RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
+RUN apt-get update && apt-get install -y gnupg2
+RUN gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys A4B469963BF863CC \
+    && gpg --export A4B469963BF863CC | apt-key add -
 RUN apt-get update --allow-unauthenticated
 RUN apt-get install -y git
 WORKDIR /opt
