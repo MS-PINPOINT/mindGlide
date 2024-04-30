@@ -40,6 +40,6 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           build-args: |
-            USER_ID=$(id -u)
-            GROUP_ID=$(id -g)
+            USER_ID=32814
+            GROUP_ID=221
             UNAME=user
