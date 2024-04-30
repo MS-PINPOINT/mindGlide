@@ -43,3 +43,4 @@ jobs:
             USER_ID=32814
             GROUP_ID=221
             UNAME=user
+            USERNAME=user
