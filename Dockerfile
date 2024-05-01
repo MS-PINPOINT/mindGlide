@@ -1,28 +1,15 @@
+#FROM nvcr.io/nvidia/pytorch:23.01-py3
 FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-devel
+#FROM nvcr.io/nvidia/kaldi:22.12-py3
 ENV DEBIAN_FRONTEND=noninteractive
-
-# Temporarily disable NVIDIA repositories
-RUN rm /etc/apt/sources.list.d/cuda.list /etc/apt/sources.list.d/nvidia-ml.list
-
-# Update and install wget and gnupg2 without NVIDIA repositories
-RUN apt-get update && apt-get install -y gnupg2 wget
-
-# Use apt-key adv to add the NVIDIA GPG key directly
-RUN apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub
-
-# Re-enable NVIDIA repositories
-RUN echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/cuda.list \
- && echo "deb https://developer.download.nvidia.com/compute/machine-learning/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/nvidia-ml.list
-
-# Now it's safe to perform update and install other packages
-RUN apt-get update
-
 ARG USER_ID
 ARG GROUP_ID
 ARG UNAME
 RUN groupadd -g $GROUP_ID -o user
 RUN useradd -m -u $USER_ID -g $GROUP_ID -o -s /bin/bash $UNAME
 USER root
+RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-keys A4B469963BF863CC
+RUN apt-get update --allow-unauthenticated
 RUN apt-get install -y git
 WORKDIR /opt
 #ENV PATH="/opt/miniconda3/bin:${PATH}"
