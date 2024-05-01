@@ -1,10 +1,20 @@
-#FROM nvcr.io/nvidia/pytorch:23.01-py3
 FROM pytorch/pytorch:1.11.0-cuda11.3-cudnn8-devel
-#FROM nvcr.io/nvidia/kaldi:22.12-py3
 ENV DEBIAN_FRONTEND=noninteractive
+
+# First, install wget and gnupg2 without updating from NVIDIA repositories
+# Ensure that no apt source lists are pointing to NVIDIA repositories yet, or disable them temporarily
 RUN apt-get update && apt-get install -y gnupg2 wget
+
+# Add the NVIDIA GPG key
 RUN wget -qO - https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64/7fa2af80.pub | apt-key add -
-RUN apt-get updateARG USER_ID
+
+# If NVIDIA repos are needed and not yet added, add them here after the key is trusted
+# Example: Add the NVIDIA repository (ensure this is done after the keys are added)
+# RUN echo "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu1804/x86_64 /" > /etc/apt/sources.list.d/nvidia-cuda.list
+
+# Now perform an update to load the repositories with the newly added key
+RUN apt-get update
+ARG USER_ID
 ARG GROUP_ID
 ARG UNAME
 RUN groupadd -g $GROUP_ID -o user
