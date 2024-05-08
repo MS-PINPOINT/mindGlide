@@ -33,16 +33,18 @@ jobs:
             type=semver,pattern={{version}}
             type=sha
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@3b5e8027fcad23fda98b2e3ac259d8d67585f671
-        with:
-          context: .
-          file: ./Dockerfile
-          push: true
-          tags: ${{ steps.meta.outputs.tags }}
-          labels: ${{ steps.meta.outputs.labels }}
-          build-args: |
-            USER_ID=32814
-            GROUP_ID=221
-            UNAME=user
-            USERNAME=user
+            - name: Build and push Docker image
+            env:
+              DOCKER_BUILDKIT: 1
+            uses: docker/build-push-action@v2
+            with:
+              context: .
+              file: ./Dockerfile
+              push: true
+              tags: ${{ steps.meta.outputs.tags }}
+              labels: ${{ steps.meta.outputs.labels }}
+              build-args: |
+                USER_ID=32814
+                GROUP_ID=221
+                UNAME=user
+                USERNAME=user
