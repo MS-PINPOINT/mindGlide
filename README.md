@@ -37,21 +37,7 @@ following command will download the latest version of the models:
 
 `git lfs pull`
 
-You can use Docker or Apptainer to run the container. To start testing
-MindGlide, run the following command:
-
-```
-cd mindGlide
-docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/mind-glide:latest {name_of_nifti_file}
-```
-
-You need to replace `{name_of_nifti_file}` with the name of the NIfTI file. For example, if you want to run the test file `test.nii.gz`, you can run the following command:
-
-```
-docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/mind-glide:latest test.nii.gz
-```
-
-`test.nii.gz` will be a brain MRI file.
+You can use Docker or Apptainer to run the container. 
 
 Docker container is used for testing the model. If you want to use the
 container on High Performance Computing (HPC) clusters, you can use
@@ -69,14 +55,14 @@ Apptainer (formerly known as Singularity). See [Apptainer](https://apptainer.org
 docker run --gpus all \
 --ipc=host --ulimit memlock=-1 -it \
 -v $PWD:/mnt \
-armaneshaghi/mind-glide:latest test/flair.nii.gz
+mspinpoint/mindglide:may2024 test/flair.nii.gz
 ```
 
 #### With Apptainer (Singularity)
 
 First you need to use another Docker container to build the Apptainer or Singularity image:
 
-`docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/test:/output --privileged -it --rm  quay.io/singularity/docker2singularity armaneshaghi/mind-glide:latest`
+`docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/test:/output --privileged -it --rm  quay.io/singularity/docker2singularity mspinpoint/mindglide:may2024`
 
 This will create a Singularity image in the `/tmp/test` directory.
 
