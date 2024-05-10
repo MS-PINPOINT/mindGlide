@@ -1,0 +1,14 @@
+monai-weekly[nibabel, tqdm]
+nilearn
+notebook
+jupyterlab
+matplotli
+pymongo
+dnspython
+qgrid
+scikit-image
+pytorch-ignite
+ipdb
+scipy==1.10.1
+nibabel
+ipdb
