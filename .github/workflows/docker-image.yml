@@ -1,15 +1,15 @@
 name: Docker Image CI
 
-on:
-  push:
-    branches: 
-        - "master"
-        - "remove_old_models"
-  pull_request:
-    branches: [ "master" ]
-  workflow_dispatch:
+#on:
+#  push:
+#    branches: 
+#        - "master"
+#        - "remove_old_models"
+#  pull_request:
+#    branches: [ "master" ]
+#  workflow_dispatch:
 
-# on: null # Disables all triggers for this workflow
+on: null # Disables all triggers for this workflow
 
 jobs:
   push_to_registry:
