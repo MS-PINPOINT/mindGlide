@@ -2,7 +2,9 @@ name: Docker Image CI
 
 on:
   push:
-    branches: [ "master" ]
+    branches: 
+        - "master"
+        - "remove_old_models"
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
