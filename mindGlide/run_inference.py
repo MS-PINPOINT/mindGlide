@@ -50,14 +50,14 @@ def main(args):
     # output folder is created in the root dir with the name of _mindglide and the task id
     output_folder = working_dir + "/_mindglide" + task_id
     model_paths = args.model_file_paths
-    # check if file paths exist
-    for item in model_paths + [args.scan_path]:
-        if not os.path.isfile(item):
-            raise Exception("model file path does not exist: ", item)
-
     image_to_segment = args.scan_path
     if not '/mnt' in image_to_segment:
         image_to_segment = '/mnt/' + image_to_segment
+
+    # check if file paths exist
+    for item in model_paths + [image_to_segment]:
+        if not os.path.isfile(item):
+            raise Exception("model file path does not exist: ", item)
 
     print("model_paths: ", model_paths)
     print("scan to segment: ", image_to_segment)
