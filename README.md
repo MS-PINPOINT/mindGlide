@@ -37,21 +37,7 @@ following command will download the latest version of the models:
 
 `git lfs pull`
 
-You can use Docker or Apptainer to run the container. To start testing
-MindGlide, run the following command:
-
-```
-cd mindGlide
-docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/mind-glide:latest {name_of_nifti_file}
-```
-
-You need to replace `{name_of_nifti_file}` with the name of the NIfTI file. For example, if you want to run the test file `test.nii.gz`, you can run the following command:
-
-```
-docker run -it --rm -v $(pwd):/mindGlide -w /mindGlide armaneshaghi/ms-pinpoint/mind-glide:latest test.nii.gz
-```
-
-`test.nii.gz` will be a brain MRI file.
+You can use Docker or Apptainer to run the container. 
 
 Docker container is used for testing the model. If you want to use the
 container on High Performance Computing (HPC) clusters, you can use
@@ -69,14 +55,16 @@ Apptainer (formerly known as Singularity). See [Apptainer](https://apptainer.org
 docker run --gpus all \
 --ipc=host --ulimit memlock=-1 -it \
 -v $PWD:/mnt \
-armaneshaghi/mind-glide:latest test/flair.nii.gz
+mspinpoint/mindglide:may2024 test/flair.nii.gz
 ```
 
 #### With Apptainer (Singularity)
 
 First you need to use another Docker container to build the Apptainer or Singularity image:
 
-`docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/test:/output --privileged -it --rm  quay.io/singularity/docker2singularity armaneshaghi/mind-glide:latest`
+```
+docker run -v /var/run/docker.sock:/var/run/docker.sock -v /tmp/test:/output --privileged -it --rm  quay.io/singularity/docker2singularity mspinpoint/mindglide:may2024
+```
 
 This will create a Singularity image in the `/tmp/test` directory.
 
@@ -117,17 +105,24 @@ more information about the models:
 
 | Model name and path in the models directory | Description | Dataset |
 |-|-|-|
-| /opt/mindGlide/models/model_0_net_key_metric=0.7627.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_2_net_key_metric=0.7541.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_2_net_key_metric=0.7579.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_3_net_key_metric=0.7713.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_3_net_key_metric=0.7717.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_4_net_key_metric=0.7645.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_5_net_key_metric=0.7866.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_6_net_key_metric=0.7723.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_7_net_key_metric=0.7634.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_8_net_key_metric=0.7489.pt | trained on dataset 1 | IPMSA |
-| /opt/mindGlide/models/model_9_net_key_metric=0.7738.pt | trained on dataset 1 | IPMSA |
+| /opt/mindGlide/models/_20240404_conjurer_trained_dice_7733.pt | trained on dataset 1 (This model is 10 times larger than the previous models) | IPMSA |
+
+### 📬 Citation
+
+If you use MindGlide please cite this paper:
+
+```bibtex
+@article {Goebl2024.03.29.24305083,
+	author = {Philipp Goebl and Jed Wingrove and Omar Abdelmannan and Barbara Brito Vega and Jonathan Stutters and Silvia Da Graca Ramos and Owain Kenway and Thomas Rosoor and Evangeline Wassmer and Jeremy Chataway and Douglas Arnold and Louis Collins and Cheryl Hemmingway and Sridar Narayanan and Declan Chard and Juan Eugenio Iglesias and Frederik Barkhof and Yael Hacohen and Alan Thompson and Daniel Alexander and Olga Ciccarelli and Arman Eshaghi},
+	title = {Repurposing Clinical MRI Archives for Multiple Sclerosis Research with a Flexible, Single-Modality Approach: New Insights from Old Scans},
+	elocation-id = {2024.03.29.24305083},
+	year = {2024},
+	doi = {10.1101/2024.03.29.24305083},
+	URL = {https://www.medrxiv.org/content/early/2024/03/30/2024.03.29.24305083},
+	eprint = {https://www.medrxiv.org/content/early/2024/03/30/2024.03.29.24305083.full.pdf},
+	journal = {medRxiv}
+} 
+```
 
 ### Acknowledgements
 
