@@ -40,7 +40,6 @@ git submodule foreach 'git lfs pull'
 
 If you already cloned without the flag:
 
-```bash
 git submodule update --init --recursive
 ```
 
