@@ -85,5 +85,3 @@ Care.
   <img src="assets/nihr_logo.png" alt="NIHR logo" width="200">
 </p>
 
-
-Credits: Image is created by OpenAI Dall-E2.
