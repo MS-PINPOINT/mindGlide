@@ -1,0 +1,3 @@
+[submodule "models"]
+	path = models
+	url = https://huggingface.co/MS-PINPOINT/mindglide
