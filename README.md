@@ -11,11 +11,32 @@
 
 ## Quick start
 
+> **Requirements**
+
+> • Git ≥ 2.13
+
+> • IMPORTANT: Git LFS — one‑time setup: `git lfs install`
+
+> • Docker
+
+> • *(Optional)* Apptainer/Singularity for HPC environments
+
+
+## Clone & get the pretrained checkpoint
+
 ```bash
-# clone code **and** pretrained checkpoint in one shot
+# 1) clone the code **and** the models sub‑repo in one step
 git clone --recurse-submodules https://github.com/MS-PINPOINT/mindGlide.git
 cd mindGlide
-```
+
+# 2) first‑time only – install Git‑LFS on your machine
+#    macOS:  brew install git-lfs
+#    Linux:  sudo apt install git-lfs
+git lfs install
+
+# 3) pull the large model file inside the submodule
+git submodule foreach 'git lfs pull'
+
 
 If you already cloned without the flag:
 
@@ -33,11 +54,6 @@ Trained models are shared in the `models` directory.
 They are trained on the datasets explained in the paper [**Nature Communications (2025)**](https://www.nature.com/articles/s41467-025-58274-8#citeas).
 
 
-> **Requirements**
-> • Git ≥ 2.13
-> • Git LFS — one‑time setup: `git lfs install`
-> • Docker
-> • *(Optional)* Apptainer/Singularity for HPC environments
 
 ---
 
