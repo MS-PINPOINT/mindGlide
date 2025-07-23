@@ -20,8 +20,8 @@ segmentation on GPU hardware.
 You will need to install the following software:
 
 - Git
+- Huggingface
 - Docker
-- Git LFS (Large File Storage)
 - AppTainer (optional)
 
 ### Installation
@@ -32,10 +32,8 @@ GitHub's Large File Storage (LFS) and run it interactively:
 
 `git clone https://github.com/MS-PINPOINT/mindGlide.git`
 
-PyTorch trained models are stored in the `models` directory. The
-following command will download the latest version of the models:
-
-`git lfs pull`
+PyTorch trained models are stored on Huggingface:
+`https://huggingface.co/MS-PINPOINT/mindglide/tree/main`
 
 You can use Docker or Apptainer to run the container. 
 
@@ -92,12 +90,12 @@ If you want to run the Docker container using your own trained model or use
 a custom script, please make sure you overwrite teh `entrypoint`. For example,
 to run bash and get into the container, you can run the following command:
 
-`docker run -it --entrypoint bash armaneshaghi/mind-glide:latest`
+`docker run -it --entrypoint bash mspinpoint/mindglide:may2024`
 
 ### Shared models
 
-Several trained models are shared in the `models` directory.
-They are trained on the datasets explained in the paper (link to be added upon publication).
+Trained models are shared in the `models` directory.
+They are trained on the datasets explained in the paper [**Nature Communications (2025)**](https://www.nature.com/articles/s41467-025-58274-8#citeas).
 
 Tailored models for extermely low quality data, that is MRI data with disproportionate small FOV, and large gaps between
 slices are shared separetly. The following table provides
@@ -112,16 +110,19 @@ more information about the models:
 If you use MindGlide please cite this paper:
 
 ```bibtex
-@article {Goebl2024.03.29.24305083,
-	author = {Philipp Goebl and Jed Wingrove and Omar Abdelmannan and Barbara Brito Vega and Jonathan Stutters and Silvia Da Graca Ramos and Owain Kenway and Thomas Rosoor and Evangeline Wassmer and Jeremy Chataway and Douglas Arnold and Louis Collins and Cheryl Hemmingway and Sridar Narayanan and Declan Chard and Juan Eugenio Iglesias and Frederik Barkhof and Yael Hacohen and Alan Thompson and Daniel Alexander and Olga Ciccarelli and Arman Eshaghi},
-	title = {Repurposing Clinical MRI Archives for Multiple Sclerosis Research with a Flexible, Single-Modality Approach: New Insights from Old Scans},
-	elocation-id = {2024.03.29.24305083},
-	year = {2024},
-	doi = {10.1101/2024.03.29.24305083},
-	URL = {https://www.medrxiv.org/content/early/2024/03/30/2024.03.29.24305083},
-	eprint = {https://www.medrxiv.org/content/early/2024/03/30/2024.03.29.24305083.full.pdf},
-	journal = {medRxiv}
-} 
+@article{Goebl2025,
+    author = {Goebl, Philipp and Wingrove, Jed and Abdelmannan, Omar and {Brito Vega}, Barbara and Stutters, Jonathan and Ramos, {Silvia Da Graca} and Kenway, Owain and Rossor, Thomas and Wassmer, Evangeline and Arnold, Douglas L. and Collins, Louis and Hemingway, Cheryl and Narayanan, Sridar and Chataway, Jeremy and Chard, Declan and Iglesias, {Juan Eugenio} and Barkhof, Frederik and Parker, Geoffrey J. M. and Oxtoby, Neil P. and Hacohen, Yael and Thompson, Alan and Alexander, Daniel C. and Ciccarelli, Olga and Eshaghi, Arman},
+    title = {Enabling new insights from old scans by repurposing clinical {MRI} archives for multiple sclerosis research},
+    journal = {Nature Communications},
+    volume = {16},
+    number = {1},
+    pages = {3149},
+    year = {2025},
+    month = apr,
+    doi = {10.1038/s41467-025-58274-8},
+    pmid = {40195318},
+    pmcid = {PMC11976987}
+}
 ```
 
 ### Acknowledgements
