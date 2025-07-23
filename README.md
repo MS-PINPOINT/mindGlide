@@ -26,6 +26,13 @@ git submodule update --init --recursive
 This pulls the model repo from the Hugging Face Hub and places
 `models/_20240404_conjurer_trained_dice_7733.pt` in the workspace.
 
+PyTorch trained models are stored on Huggingface:
+`https://huggingface.co/MS-PINPOINT/mindglide/tree/main`
+
+Trained models are shared in the `models` directory.
+They are trained on the datasets explained in the paper [**Nature Communications (2025)**](https://www.nature.com/articles/s41467-025-58274-8#citeas).
+
+
 > **Requirements**
 > • Git ≥ 2.13
 > • Git LFS — one‑time setup: `git lfs install`
@@ -40,7 +47,7 @@ This pulls the model repo from the Hugging Face Hub and places
 docker run --gpus all \  
   --ipc=host --ulimit memlock=-1 -it \  
   -v $PWD:/mnt \  
-  armaneshaghi/mind-glide:latest <your_scan>.nii.gz
+  mspinpoint/mindglide:may2024 <your_scan>.nii.gz
 ```
 
 For Singularity/Apptainer, build once then run:
@@ -70,6 +77,28 @@ models/_20240404_conjurer_trained_dice_7733.pt
 ```
 
 Additional or legacy checkpoints are archived in the [Hugging Face model repo](https://huggingface.co/MS-PINPOINT/mindglide).
+
+
+### 📬 Citation
+
+If you use MindGlide please cite this paper:
+
+```bibtex
+@article{Goebl2025,
+    author = {Goebl, Philipp and Wingrove, Jed and Abdelmannan, Omar and {Brito Vega}, Barbara and Stutters, Jonathan and Ramos, {Silvia Da Graca} and Kenway, Owain and Rossor, Thomas and Wassmer, Evangeline and Arnold, Douglas L. and Collins, Louis and Hemingway, Cheryl and Narayanan, Sridar and Chataway, Jeremy and Chard, Declan and Iglesias, {Juan Eugenio} and Barkhof, Frederik and Parker, Geoffrey J. M. and Oxtoby, Neil P. and Hacohen, Yael and Thompson, Alan and Alexander, Daniel C. and Ciccarelli, Olga and Eshaghi, Arman},
+    title = {Enabling new insights from old scans by repurposing clinical {MRI} archives for multiple sclerosis research},
+    journal = {Nature Communications},
+    volume = {16},
+    number = {1},
+    pages = {3149},
+    year = {2025},
+    month = apr,
+    doi = {10.1038/s41467-025-58274-8},
+    pmid = {40195318},
+    pmcid = {PMC11976987}
+}
+```
+
 
 ---
 
