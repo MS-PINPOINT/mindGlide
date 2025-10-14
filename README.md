@@ -1,28 +1,72 @@
+<div align="center">
 
 # MindGlide
 
-**Ultrafast segmentation of real‑world brain MRI for multiple‑sclerosis patients — any modality, any quality.** Built with PyTorch + MONAI and trained on >23 000 scans.
+<p>
+<strong>Ultrafast segmentation of real‑world brain MRI for multiple‑sclerosis patients — any modality, any quality.</strong><br>Built with PyTorch + MONAI and trained on >23 000 scans.<br>
+</p>
 
 <p align="center">
   <img src="assets/t2.png" alt="MindGlide banner" width="500" height="300">
 </p>
-
----
-
-## Quick start
-
-> **Requirements**
-
-> • Git ≥ 2.13
-
-> • IMPORTANT: Git LFS — one‑time setup: `git lfs install`
-
-> • Docker
-
-> • *(Optional)* Apptainer/Singularity for HPC environments
+</div>
 
 
-## Clone & get the pretrained checkpoint
+## Usage
+
+You can install the tool directly from the GitHub repository using `pip`:
+
+```bash
+pip install git+https://github.com/MS-PINPOINT/mindGlide.git
+```
+
+After installation, verify that the command is available by running:
+
+```bash
+mindglide --help
+```
+
+To segment a scan, run:
+
+```bash
+mindglide -i /path/to/input.nii.gz -o /path/to/output.nii.gz
+```
+
+You can adjust the `--sw_batch_size` parameter (default: 4) based on your available VRAM.
+MindGlide runs in seconds on a GPU, and typically in under 3 minutes on a CPU.
+Device selection (GPU or CPU) is handled automatically.
+
+The `mindglide` command also supports directories of NIfTI files as input, allowing you to process multiple scans at once without reloading the model each time.
+
+The following table maps the segmentation codes to their corresponding region names:
+
+
+| Code | Structure Name                  | Code | Structure Name           |
+|:----:|:--------------------------------|:----:|:--------------------------|
+| 0    | Background                      | 10   | Optic_chiasm              |
+| 1    | CSF                             | 11   | Cerebellar_vermis         |
+| 2    | Ventricles_3_4_5                | 12   | Corpus_callosum           |
+| 3    | DGM                             | 13   | White_matter              |
+| 4    | Pons                            | 14   | Frontal_lobe_GM           |
+| 5    | Brainstem                       | 15   | Limbic_cortex_GM          |
+| 6    | Cerebellum                      | 16   | Parietal_lobe_GM          |
+| 7    | Temporal_lobe                   | 17   | Occipital_lobe_GM         |
+| 8    | Temporal_horn_lateral_ventricle | 18   | Lesion                    |
+| 9    | Lateral_ventricle               | 19   | Ventral_diencephalon      |
+
+
+
+
+
+## Run from scripts
+
+### Requirements
+- Git ≥ 2.13
+- IMPORTANT: Git LFS — one‑time setup: `git lfs install`
+- Docker
+- *(Optional)* Apptainer/Singularity for HPC environments
+
+### Clone & get the pretrained checkpoint
 
 ```bash
 # 1) clone the code **and** the models sub‑repo in one step
@@ -54,9 +98,6 @@ Trained models are shared in the `models` directory.
 They are trained on the datasets explained in the paper [**Nature Communications (2025)**](https://www.nature.com/articles/s41467-025-58274-8#citeas).
 
 
-
----
-
 ## Run in Docker (GPU)
 
 ```bash
@@ -74,15 +115,12 @@ singularity run --nv \
   /path/to/mind-glide_latest.sif <your_scan>.nii.gz
 ```
 
----
-
 ## Fine‑tuning
 
 Use the scripts in `scripts/` as a template. Start with a low learning
 rate (e.g. 1e‑3) to avoid catastrophic forgetting — shipped models were
 trained with 1e‑2.
 
----
 
 ## Model weights
 
