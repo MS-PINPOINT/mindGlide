@@ -1,0 +1,33 @@
+[build-system]
+requires = ["setuptools"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mindglide"
+version = "0.0.0"
+description = ""
+readme = "README.md"
+requires-python = ">=3.9"
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+dependencies = [
+    "numpy == 1.*",
+    "nibabel == 5.*",
+    "torch == 2.*",
+    "tqdm",
+    "monai == 1.*",
+    "huggingface_hub",
+    "scikit-image"
+]
+
+[project.scripts]
+mindglide = "mindglide.infer:main"
+
+[tool.setuptools]
+package-dir = {"" = "inference"}
+
+[tool.setuptools.packages.find]
+where = ["inference"]
