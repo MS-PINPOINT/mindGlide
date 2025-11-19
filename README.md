@@ -101,10 +101,11 @@ They are trained on the datasets explained in the paper [**Nature Communications
 ## Run in Docker (GPU)
 
 ```bash
-docker run --gpus all \  
-  --ipc=host --ulimit memlock=-1 -it \  
-  -v $PWD:/mnt \  
-  mspinpoint/mindglide:may2024 <your_scan>.nii.gz
+docker run --gpus all \
+  --ipc=host --ulimit memlock=-1 -it \
+  -v /data:/data \
+  <Mindglide image> -i /data/<your_scan>.nii.gz -o /data/output.nii.gz
+
 ```
 
 For Singularity/Apptainer, build once then run:
