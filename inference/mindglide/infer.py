@@ -30,6 +30,9 @@ def main():
     parser.add_argument('--sw_batch_size', type=int, default=4,
                         help='Batch size for the sliding window inferer.')
 
+    parser.add_argument('--model', type=str, default=None,
+                        help='[Optional] path to local MindGlide model checkpoint. If not set, checkpoints are downloaded from HF.')
+
     parser.add_argument('--resume', action='store_true', default=False,
                         help='Ignore scans that have already been segmented')
 
@@ -106,10 +109,16 @@ Nature Communications, 16(1), 3149.
     # ===============================================
 
     # Download the weights from HF
-    model_path = hf_hub_download(
-        repo_id='MS-PINPOINT/mindglide', 
-        filename='_20240404_conjurer_trained_dice_7733.pt'
-    )
+    if args.model is None:
+        model_path = hf_hub_download(
+            repo_id='MS-PINPOINT/mindglide', 
+            filename='_20240404_conjurer_trained_dice_7733.pt'
+        )
+    else:
+        if not os.path.isfile(args.model):
+            print(f"Error: The specified model file was not found: {args.model}")
+            exit(1)
+        model_path = args.model
 
     # Instantiate MindGlide network and load weights
     net = get_network(checkpoint_path=model_path, device=DEVICE)
