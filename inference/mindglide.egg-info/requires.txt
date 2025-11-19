@@ -1,7 +1,0 @@
-numpy==1.*
-nibabel==5.*
-torch==2.*
-tqdm
-monai==1.*
-huggingface_hub
-scikit-image
