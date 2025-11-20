@@ -26,12 +26,14 @@ def main():
 
     parser.add_argument('-o', type=str, required=True,
                         help='Path to the output NIfTI file or directory for saving segmentation masks.')
+    
+    parser.add_argument( "--model_path", type=str, default=None,
+             help="Path to MindGlide checkpoint .pt file. "
+             "If set, runs completely offline and skips HuggingFace Hub."
+    )
 
     parser.add_argument('--sw_batch_size', type=int, default=4,
                         help='Batch size for the sliding window inferer.')
-
-    parser.add_argument('--model', type=str, default=None,
-                        help='[Optional] path to local MindGlide model checkpoint. If not set, checkpoints are downloaded from HF.')
 
     parser.add_argument('--no_klc', action='store_true', default=False,
                         help='Skip keep-largest-component post-processing')
@@ -110,18 +112,24 @@ Nature Communications, 16(1), 3149.
     # ===============================================
     # Download and initialise the model.
     # ===============================================
+    # Download the weights from HF / resolve checkpoint path
+    env_model_path = os.getenv("MODEL_PATH")
 
-    # Download the weights from HF
-    if args.model is None:
-        model_path = hf_hub_download(
-            repo_id='MS-PINPOINT/mindglide', 
-            filename='_20240404_conjurer_trained_dice_7733.pt'
-        )
+    if env_model_path is not None and Path(env_model_path).is_file():
+        print('env var found')
+        # 1) Prefer MODEL_PATH if set and exists
+        model_path = Path(env_model_path)
+    elif args.model_path is not None:
+        # 2) Then fall back to CLI argument
+        model_path = Path(args.model_path)
     else:
-        if not os.path.isfile(args.model):
-            print(f"Error: The specified model file was not found: {args.model}")
-            exit(1)
-        model_path = args.model
+        # 3) Finally, download from HF as before
+        model_path = Path(
+            hf_hub_download(
+                repo_id="MS-PINPOINT/mindglide",
+                filename="_20240404_conjurer_trained_dice_7733.pt",
+            )
+        )
 
     # Instantiate MindGlide network and load weights
     net = get_network(checkpoint_path=model_path, device=DEVICE)

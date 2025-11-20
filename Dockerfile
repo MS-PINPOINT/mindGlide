@@ -22,7 +22,11 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # here it’s already installed via the base image, but you might reinstall/upgrade other libs.
 RUN pip install --no-cache-dir \
     git+https://github.com/MS-PINPOINT/mindGlide.git
+RUN mkdir -p /workspace/models && \
+    wget -O /workspace/models/_20240404_conjurer_trained_dice_7733.pt \
+        https://huggingface.co/MS-PINPOINT/mindglide/resolve/main/_20240404_conjurer_trained_dice_7733.pt
 ENV PYTHONUNBUFFERED=1 \
     # any other environment variables your app needs \
-    CUDA_LAUNCH_BLOCKING=1
+    CUDA_LAUNCH_BLOCKING=1 \
+    MODEL_PATH="/workspace/models/_20240404_conjurer_trained_dice_7733.pt"
 
