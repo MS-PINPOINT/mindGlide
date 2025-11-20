@@ -33,6 +33,9 @@ def main():
     parser.add_argument('--model', type=str, default=None,
                         help='[Optional] path to local MindGlide model checkpoint. If not set, checkpoints are downloaded from HF.')
 
+    parser.add_argument('--no_klc', action='store_true', default=False,
+                        help='Skip keep-largest-component post-processing')
+
     parser.add_argument('--resume', action='store_true', default=False,
                         help='Ignore scans that have already been segmented')
 
@@ -60,7 +63,7 @@ Nature Communications, 16(1), 3149.
     from monai.transforms import AsDiscrete
 
     from mindglide.network import get_network
-    from mindglide.transforms import get_transforms, recovery_prediction
+    from mindglide.transforms import get_transforms, recovery_prediction, keep_largest_component
     from mindglide.consts import PATCH_SIZE, PROPERTIES
 
     DEVICE = get_best_device()
@@ -186,6 +189,10 @@ Nature Communications, 16(1), 3149.
 
                     # Save the final segmentation map
                     nifti_img = nib.Nifti1Image(pred_padded.astype(np.uint8), affine)
+                    
+                    if not args.no_klc:
+                        nifti_img = keep_largest_component(nifti_img)
+
                     nib.save(nifti_img, opaths[idx])
 
             except Exception as e:
