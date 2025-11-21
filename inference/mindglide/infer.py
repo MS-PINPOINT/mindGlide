@@ -27,7 +27,6 @@ def main():
 
     parser.add_argument('-o', type=str, required=True,
                         help='Path to the output NIfTI file or directory for saving segmentation masks.')
-    
     parser.add_argument( "--model_path", type=str, default=None,
              help="Path to MindGlide checkpoint .pt file. "
              "If set, runs completely offline and skips HuggingFace Hub."
@@ -35,9 +34,6 @@ def main():
 
     parser.add_argument('--sw_batch_size', type=int, default=4,
                         help='Batch size for the sliding window inferer.')
-
-    parser.add_argument('--no_klc', action='store_true', default=False,
-                        help='Skip keep-largest-component post-processing')
 
     parser.add_argument('--resume', action='store_true', default=False,
                         help='Ignore scans that have already been segmented')
@@ -66,7 +62,7 @@ Nature Communications, 16(1), 3149.
     from monai.transforms import AsDiscrete
 
     from mindglide.network import get_network
-    from mindglide.transforms import get_transforms, recovery_prediction, keep_largest_component
+    from mindglide.transforms import get_transforms, recovery_prediction
     from mindglide.consts import PATCH_SIZE, PROPERTIES
 
     DEVICE = get_best_device()
@@ -116,6 +112,7 @@ Nature Communications, 16(1), 3149.
     # Download the weights from HF / resolve checkpoint path
     env_model_path = os.getenv("MODEL_PATH")
 
+  
     if env_model_path is not None and Path(env_model_path).is_file():
         # 1) Prefer MODEL_PATH if set and exists
         model_path = Path(env_model_path)
@@ -197,10 +194,6 @@ Nature Communications, 16(1), 3149.
 
                     # Save the final segmentation map
                     nifti_img = nib.Nifti1Image(pred_padded.astype(np.uint8), affine)
-                    
-                    if not args.no_klc:
-                        nifti_img = keep_largest_component(nifti_img)
-
                     nib.save(nifti_img, opaths[idx])
 
             except Exception as e:

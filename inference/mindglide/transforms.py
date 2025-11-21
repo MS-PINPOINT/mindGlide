@@ -1,5 +1,4 @@
 import numpy as np
-import nibabel as nib
 from monai.transforms import (
     CastToTyped,
     Compose,
@@ -14,7 +13,6 @@ from monai.transforms import (
 from monai.transforms.compose import MapTransform
 from monai.transforms.utils import generate_spatial_bounding_box
 from skimage.transform import resize
-from scipy import ndimage
 
 from .consts import CLIP_VALUES, SPACING, NORMALIZE_VALUES, PROPERTIES
 
@@ -280,34 +278,3 @@ def resample_label(label, shape, anisotrophy_flag):
 
     reshaped = np.expand_dims(reshaped, 0)
     return reshaped
-
-
-def keep_largest_component(segm: nib.Nifti1Image) -> nib.Nifti1Image:
-    """
-    Keeps only the largest connected component in a NIfTI segmentation image.
-    """
-    # get_fdata returns float64; we copy it to avoid modifying the source in-place
-    seg_data = segm.get_fdata().copy()
-    
-    # find connected components
-    labeled, num_features = ndimage.label(seg_data > 0)
-
-    if num_features == 0:
-        raise ValueError("No connected components found in segmentation.")
-
-    # count the labels in the segmentation (skip first index which is background)
-    sizes = np.bincount(labeled.ravel())[1:]
-    
-    # Get the label with the highest count. 
-    # argmax returns 0-based index, so we add 1 to match the label value.
-    largest_component_label = sizes.argmax() + 1
-
-    # Zero out everything that isn't the largest component
-    seg_data[labeled != largest_component_label] = 0
-
-    # Cast data back to original dtype (or uint8/int16) 
-    # to avoid saving a massive float64 file.
-    cleaned_data = seg_data.astype(segm.dataobj.dtype)
-
-    # save the cleaned segmentation
-    return nib.Nifti1Image(cleaned_data, segm.affine, segm.header)
