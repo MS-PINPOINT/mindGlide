@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mindglide"
-version = "0.0.0"
+version = "1.0.2"
 description = ""
 readme = "README.md"
 requires-python = ">=3.9"
@@ -20,11 +20,13 @@ dependencies = [
     "tqdm",
     "monai == 1.*",
     "huggingface_hub",
-    "scikit-image"
+    "scikit-image",
+    "pandas"
 ]
 
 [project.scripts]
 mindglide = "mindglide.infer:main"
+mindglide-volumes = "mindglide.volumes:main"
 
 [tool.setuptools]
 package-dir = {"" = "inference"}
