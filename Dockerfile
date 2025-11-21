@@ -20,8 +20,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Install pip packages
 # Make sure the torch version corresponds to your base image – 
 # here it’s already installed via the base image, but you might reinstall/upgrade other libs.
-RUN pip install --no-cache-dir \
-    git+https://github.com/MS-PINPOINT/mindGlide.git
+COPY . /workspace/
+RUN pip install --no-cache-dir .
+    
 RUN mkdir -p /workspace/models && \
     wget -O /workspace/models/_20240404_conjurer_trained_dice_7733.pt \
         https://huggingface.co/MS-PINPOINT/mindglide/resolve/main/_20240404_conjurer_trained_dice_7733.pt

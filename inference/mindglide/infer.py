@@ -1,6 +1,7 @@
 import os
 import argparse
 import warnings
+from pathlib import Path
 warnings.filterwarnings("ignore")
 
 
@@ -116,7 +117,6 @@ Nature Communications, 16(1), 3149.
     env_model_path = os.getenv("MODEL_PATH")
 
     if env_model_path is not None and Path(env_model_path).is_file():
-        print('env var found')
         # 1) Prefer MODEL_PATH if set and exists
         model_path = Path(env_model_path)
     elif args.model_path is not None:
