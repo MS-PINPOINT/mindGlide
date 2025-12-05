@@ -20,30 +20,63 @@ def main():
     """
     Runs the MindGlide model inference on a directory of NIfTI files.
     """
-    parser = argparse.ArgumentParser(description="MindGlide Brain Segmentation Inference")
+    parser = argparse.ArgumentParser(description="MindGlide: Brain Segmentation Inference Tool")
 
-    parser.add_argument('-i', type=str, required=True,
-                        help='Path to a NIfTI file or a directory containing NIfTI images.')
-
-    parser.add_argument('-o', type=str, required=True,
-                        help='Path to the output NIfTI file or directory for saving segmentation masks.')
-    
-    parser.add_argument( "--model_path", type=str, default=None,
-             help="Path to MindGlide checkpoint .pt file. "
-             "If set, runs completely offline and skips HuggingFace Hub."
+    parser.add_argument(
+        '-i',
+        type=str, 
+        required=True, 
+        metavar="PATH",
+        help="Path to a NIfTI file or a directory containing NIfTI images."
     )
 
-    parser.add_argument('--sw_batch_size', type=int, default=4,
-                        help='Batch size for the sliding window inferer.')
+    parser.add_argument(
+        '-o', 
+        type=str, 
+        required=True, 
+        metavar="PATH",
+        help="Path to the output NIfTI file or directory."
+    )
 
-    parser.add_argument('--no_klc', action='store_true', default=False,
-                        help='Skip keep-largest-component post-processing')
+    parser.add_argument(
+        "--model_path", 
+        type=str, 
+        default=None, 
+        metavar="FILE",
+        help="Path to local .pt checkpoint. If set, skips HuggingFace download."
+    )
 
-    parser.add_argument('--resume', action='store_true', default=False,
-                        help='Ignore scans that have already been segmented')
+    parser.add_argument(
+        '--sw_batch_size', 
+        type=int, 
+        default=4, 
+        help="Batch size for the sliding window inferer."
+    )
+
+    parser.add_argument(
+        '--resume', 
+        action='store_true', 
+        help="Skip scans that have already been segmented in the output directory."
+    )
+
+    parser.add_argument(
+        '--no_klc', 
+        action='store_true', 
+        help="Disable 'Keep Largest Component' post-processing."
+    )
+
+    parser.add_argument(
+        '--no-reorient', 
+        action='store_true', 
+        help=(
+            "Disable automatic re-orientation to RAS coordinates before inference. "
+            "Note: The final output will always be aligned with the original input "
+            "scan, regardless of this setting."
+        )
+    )
 
     args = parser.parse_args()
-    
+
     print("""
 If you use this tool, please cite the original MindGlide paper:
 ------
@@ -156,7 +189,7 @@ Nature Communications, 16(1), 3149.
 
     # Create MONAI dataset and dataloader
     # The transforms handle preprocessing like resizing and intensity normalization
-    dataset = Dataset(data=data, transform=get_transforms())
+    dataset = Dataset(data=data, transform=get_transforms(no_reorient=args.no_reorient))
     dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=4)
 
     print(f"Found {len(data)} images to process.")
@@ -177,8 +210,21 @@ Nature Communications, 16(1), 3149.
                 # Post-process and save each prediction in the batch
                 for idx in range(predictions.shape[0]):
                     
-                    pred                = as_discrete(predictions[idx])
-                    affine              = batch["image_meta_dict"]["affine"][idx].numpy()
+                    # The image is re-oriented to RAS as part of our set of pre-processing.
+                    # The original orientation can be recovered from the original affine matrix,
+                    # which is stored inside `image_meta_dict` (this is not affected by the 
+                    # transforms applied to the input). 
+                    original_affine = batch['image_meta_dict']['affine'][idx].numpy()
+                    original_orientation = nib.orientations.io_orientation(original_affine)
+
+                    # convert the prediction into [K, H, W, D] where K is 
+                    # the number of anatomical tissues.                 
+                    pred = as_discrete(predictions[idx])
+
+                    # the input scan is resampled if it's anisotropic. In this
+                    # case, we need to transform the segmentation back to the input
+                    # space. To do this, we need some metadata that have been stored
+                    # by the `PreprocessAnisotropic` transform.
                     resample_flag       = batch["resample_flag"][idx].item()
                     anisotrophy_flag    = batch["anisotrophy_flag"][idx].item()
                     crop_shape          = batch["crop_shape"][idx].tolist()
@@ -188,19 +234,37 @@ Nature Communications, 16(1), 3149.
                     if resample_flag:
                         pred = recovery_prediction(pred, [num_classes, *crop_shape], anisotrophy_flag)
 
+                    # Finally, select the class of highest probability and create a
+                    # segmentation map (H, W, D) where [i,j,k] indicates the anatomical
+                    # label of the voxel at that position.
                     pred = np.argmax(pred, axis=0)
 
-                    # Pad the cropped prediction back to the original image size
+                    
+                    # This is still part of the recovery process to get the prediction
+                    # to the input space. Specifically, we pad the cropped prediction back 
+                    # to the original image size.
                     pred_padded = np.zeros(original_shape, dtype=pred.dtype)
                     (h_start, w_start, d_start), (h_end, w_end, d_end) = bbox
                     pred_padded[h_start:h_end, w_start:w_end, d_start:d_end] = pred
-
-                    # Save the final segmentation map
-                    nifti_img = nib.Nifti1Image(pred_padded.astype(np.uint8), affine)
                     
+                    # This is the correct affine of the segmentation (the affine of the input
+                    # has been updated subject to different transformations, e.g., OrientationD).
+                    current_affine = batch["output_affine"][idx]
+                    nifti_img = nib.Nifti1Image(pred_padded.astype(np.uint8), current_affine)
+
+                    # Move the segmentation back to the original orientation.
+                    current_orientation = nib.orientations.io_orientation(current_affine)
+                    
+                    if not np.all(current_orientation == original_orientation):
+                        back_to_orig_ornt = nib.orientations.ornt_transform(current_orientation, original_orientation)
+                        nifti_img = nifti_img.as_reoriented(back_to_orig_ornt)
+
+                    # Keep the largest component of the segmentation (removes small regions
+                    # outside of the brain).
                     if not args.no_klc:
                         nifti_img = keep_largest_component(nifti_img)
 
+                    # Save the output.
                     nib.save(nifti_img, opaths[idx])
 
             except Exception as e:
