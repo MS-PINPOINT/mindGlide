@@ -10,6 +10,7 @@ from monai.transforms import (
     SpatialCrop,
     ToTensord,
     EnsureTyped,
+    Orientationd
 )
 from monai.transforms.compose import MapTransform
 from monai.transforms.utils import generate_spatial_bounding_box
@@ -19,7 +20,7 @@ from scipy import ndimage
 from .consts import CLIP_VALUES, SPACING, NORMALIZE_VALUES, PROPERTIES
 
 
-def get_transforms():
+def get_transforms(no_reorient: bool = False):
     """
     Transforms used for the inference stage.
     """
@@ -31,14 +32,26 @@ def get_transforms():
         model_mode='test',
     )
 
-    return Compose([
+    transforms_list = [
         LoadImaged(keys=["image"], image_only=False),
         EnsureChannelFirstd(keys=["image"]),
+    ]
+
+    if not no_reorient:
+        transforms_list.append(Orientationd(keys=["image"], axcodes="RAS"))
+
+    transforms_list += [
         anisotropy_process,
+        # Warning: we assume that all the transforms that follow PreprocessAnisotropic
+        # do not modify the affine matrix of the image (we checkpoint the affine stored 
+        # into the MetaTensor, as the metadata are lost by this transform). We need this
+        # to recover the orientation of the output segmentation.
         ToTensord(keys="image"),
         CastToTyped(keys=["image"], dtype=(np.float32)),
         EnsureTyped(keys=["image"]),
-    ])
+    ]
+
+    return Compose(transforms_list)
 
 
 def recovery_prediction(prediction, shape, anisotrophy_flag):
@@ -138,7 +151,17 @@ class PreprocessAnisotropic(MapTransform):
         d = dict(data)
         image = d["image"]
 
-        image_spacings = d["image_meta_dict"]["pixdim"][1:4].tolist()
+        # We can't use d['image_meta_dict']['affine'] here because it does
+        # not reflect the actual affine of the image: the MONAI transforms
+        # (e.g., OrientationD) do not modify the `image_meta_dict`. Let's 
+        # use the MetaTensor affine instead (which tracks these transforms). 
+        image_spacings = list(image.pixdim.numpy())
+
+        # This Transform destroys the MetaTensor metadata by turning it into
+        # a torch.Tensor. Since we need these metadata to recover the output
+        # orientation, let's checkpoint the affine matrix at this point:
+        d["output_affine"] = image.affine.numpy()
+
 
         if "label" in self.keys:
             label = d["label"]
