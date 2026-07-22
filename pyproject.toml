@@ -18,7 +18,7 @@ dependencies = [
     "nibabel == 5.*",
     "torch == 2.*",
     "tqdm",
-    "monai == 1.*",
+    "monai >=1,<1.6",
     "huggingface_hub",
     "scikit-image",
     "pandas"
