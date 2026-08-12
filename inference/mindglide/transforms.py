@@ -12,7 +12,7 @@ from monai.transforms import (
     EnsureTyped,
     Orientationd
 )
-from monai.transforms.compose import MapTransform
+from monai.transforms import MapTransform
 from monai.transforms.utils import generate_spatial_bounding_box
 from skimage.transform import resize
 from scipy import ndimage
