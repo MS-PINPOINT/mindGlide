@@ -3,7 +3,6 @@ import nibabel as nib
 from monai.transforms import (
     CastToTyped,
     Compose,
-    CropForegroundd,
     EnsureChannelFirstd,
     LoadImaged,
     NormalizeIntensity,
@@ -17,7 +16,7 @@ from monai.transforms.utils import generate_spatial_bounding_box
 from skimage.transform import resize
 from scipy import ndimage
 
-from .consts import CLIP_VALUES, SPACING, NORMALIZE_VALUES, PROPERTIES
+from .consts import CLIP_VALUES, SPACING, NORMALIZE_VALUES
 
 
 def get_transforms(no_reorient: bool = False):
@@ -29,7 +28,6 @@ def get_transforms(no_reorient: bool = False):
         clip_values=CLIP_VALUES,
         pixdim=SPACING,
         normalize_values=NORMALIZE_VALUES,
-        model_mode='test',
     )
 
     transforms_list = [
@@ -118,7 +116,6 @@ class PreprocessAnisotropic(MapTransform):
         clip_values,
         pixdim,
         normalize_values,
-        model_mode,
     ) -> None:
         super().__init__(keys)
         self.keys = keys
@@ -127,11 +124,7 @@ class PreprocessAnisotropic(MapTransform):
         self.target_spacing = pixdim
         self.mean = normalize_values[0]
         self.std = normalize_values[1]
-        self.training = False
-        self.crop_foreg = CropForegroundd(keys=["image", "label"], source_key="image", allow_smaller=True)
         self.normalize_intensity = NormalizeIntensity(nonzero=True, channel_wise=True)
-        if model_mode in ["train"]:
-            self.training = True
 
     def calculate_new_shape(self, spacing, shape):
         spacing_ratio = np.array(spacing) / np.array(self.target_spacing)
@@ -162,21 +155,11 @@ class PreprocessAnisotropic(MapTransform):
         # orientation, let's checkpoint the affine matrix at this point:
         d["output_affine"] = image.affine.numpy()
 
-
-        if "label" in self.keys:
-            label = d["label"]
-            label[label < 0] = 0
-
-        if self.training:
-            # only task 04 does not be impacted
-            cropped_data = self.crop_foreg({"image": image, "label": label})
-            image, label = cropped_data["image"], cropped_data["label"]
-        else:
-            d["original_shape"] = np.array(image.shape[1:])
-            box_start, box_end = generate_spatial_bounding_box(image, allow_smaller=True)
-            image = SpatialCrop(roi_start=box_start, roi_end=box_end)(image)
-            d["bbox"] = np.vstack([box_start, box_end])
-            d["crop_shape"] = np.array(image.shape[1:])
+        d["original_shape"] = np.array(image.shape[1:])
+        box_start, box_end = generate_spatial_bounding_box(image, allow_smaller=True)
+        image = SpatialCrop(roi_start=box_start, roi_end=box_end)(image)
+        d["bbox"] = np.vstack([box_start, box_end])
+        d["crop_shape"] = np.array(image.shape[1:])
 
         original_shape = image.shape[1:]
         # calculate shape
@@ -190,8 +173,6 @@ class PreprocessAnisotropic(MapTransform):
             resample_shape = self.calculate_new_shape(image_spacings, original_shape)
             anisotrophy_flag = self.check_anisotrophy(image_spacings)
             image = resample_image(image, resample_shape, anisotrophy_flag)
-            if self.training:
-                label = resample_label(label, resample_shape, anisotrophy_flag)
 
         d["resample_flag"] = resample_flag
         d["anisotrophy_flag"] = anisotrophy_flag
@@ -203,9 +184,6 @@ class PreprocessAnisotropic(MapTransform):
             image = self.normalize_intensity(image.copy())
 
         d["image"] = image
-
-        if "label" in self.keys:
-            d["label"] = label
 
         return d
 
@@ -252,57 +230,6 @@ def resample_image(image, shape, anisotrophy_flag):
             resized_channels.append(resized)
     resized = np.stack(resized_channels, axis=0)
     return resized
-
-
-def resample_label(label, shape, anisotrophy_flag):
-    reshaped = np.zeros(shape, dtype=np.uint8)
-    n_class = np.max(label)
-    if anisotrophy_flag:
-        shape_2d = shape[:-1]
-        depth = label.shape[-1]
-        reshaped_2d = np.zeros((*shape_2d, depth), dtype=np.uint8)
-
-        for class_ in range(1, int(n_class) + 1):
-            for depth_ in range(depth):
-                mask = label[0, :, :, depth_] == class_
-                resized_2d = resize(
-                    mask.astype(float),
-                    shape_2d,
-                    order=1,
-                    mode="edge",
-                    cval=0,
-                    clip=True,
-                    anti_aliasing=False,
-                )
-                reshaped_2d[:, :, depth_][resized_2d >= 0.5] = class_
-        for class_ in range(1, int(n_class) + 1):
-            mask = reshaped_2d == class_
-            resized = resize(
-                mask.astype(float),
-                shape,
-                order=0,
-                mode="constant",
-                cval=0,
-                clip=True,
-                anti_aliasing=False,
-            )
-            reshaped[resized >= 0.5] = class_
-    else:
-        for class_ in range(1, int(n_class) + 1):
-            mask = label[0] == class_
-            resized = resize(
-                mask.astype(float),
-                shape,
-                order=1,
-                mode="edge",
-                cval=0,
-                clip=True,
-                anti_aliasing=False,
-            )
-            reshaped[resized >= 0.5] = class_
-
-    reshaped = np.expand_dims(reshaped, 0)
-    return reshaped
 
 
 def keep_largest_component(segm: nib.Nifti1Image) -> nib.Nifti1Image:

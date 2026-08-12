@@ -393,10 +393,6 @@ def main():
                     original_affine = batch['image_meta_dict']['affine'][idx].numpy()
                     original_orientation = nib.orientations.io_orientation(original_affine)
 
-                    # convert the prediction into [K, H, W, D] where K is
-                    # the number of anatomical tissues.
-                    pred = as_discrete(predictions[idx])
-
                     # the input scan is resampled if it's anisotropic. In this
                     # case, we need to transform the segmentation back to the input
                     # space. To do this, we need some metadata that have been stored
@@ -407,13 +403,16 @@ def main():
                     original_shape      = batch["original_shape"][idx].tolist()
                     bbox                = batch["bbox"][idx].tolist()
 
+                    # Select the class of highest probability per voxel to build a
+                    # segmentation map (H, W, D) where [i,j,k] is the anatomical
+                    # label of that voxel. recovery_prediction needs a one-hot
+                    # [K, H, W, D] volume, so only the resampled path pays for one.
                     if resample_flag:
+                        pred = as_discrete(predictions[idx])
                         pred = recovery_prediction(pred, [num_classes, *crop_shape], anisotrophy_flag)
-
-                    # Finally, select the class of highest probability and create a
-                    # segmentation map (H, W, D) where [i,j,k] indicates the anatomical
-                    # label of the voxel at that position.
-                    pred = np.argmax(pred, axis=0)
+                        pred = np.argmax(pred, axis=0)
+                    else:
+                        pred = predictions[idx].argmax(dim=0).numpy()
 
                     # This is still part of the recovery process to get the prediction
                     # to the input space. Specifically, we pad the cropped prediction back
