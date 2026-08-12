@@ -316,7 +316,9 @@ def keep_largest_component(segm: nib.Nifti1Image) -> nib.Nifti1Image:
     labeled, num_features = ndimage.label(seg_data > 0)
 
     if num_features == 0:
-        raise ValueError("No connected components found in segmentation.")
+        # Empty segmentation (e.g. the input was not a brain image); nothing to clean.
+        print("Warning: segmentation is empty — is the input a brain MRI?")
+        return segm
 
     # count the labels in the segmentation (skip first index which is background)
     sizes = np.bincount(labeled.ravel())[1:]
