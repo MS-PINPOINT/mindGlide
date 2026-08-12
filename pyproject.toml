@@ -4,17 +4,24 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "mindglide"
-version = "1.0.2"
-description = ""
+version = "1.1.0"
+description = "Ultrafast segmentation of real-world brain MRI for multiple-sclerosis patients — any modality, any quality."
 readme = "README.md"
 requires-python = ">=3.9"
+license = { text = "MIT" }
+authors = [
+    { name = "MS-PINPOINT team" },
+]
 classifiers = [
     "Programming Language :: Python :: 3",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
+    "Intended Audience :: Science/Research",
+    "Topic :: Scientific/Engineering :: Medical Science Apps.",
 ]
 dependencies = [
-    "numpy == 1.*",
+    # numpy 1.x has no wheels for Python >= 3.13; MONAI itself allows numpy >=1.24,<3
+    "numpy >=1.24,<3",
     "nibabel == 5.*",
     "torch == 2.*",
     "tqdm",
@@ -23,6 +30,14 @@ dependencies = [
     "scikit-image",
     "pandas"
 ]
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.urls]
+Homepage = "https://github.com/MS-PINPOINT/mindGlide"
+Paper = "https://www.nature.com/articles/s41467-025-58274-8"
+Models = "https://huggingface.co/MS-PINPOINT/mindglide"
 
 [project.scripts]
 mindglide = "mindglide.infer:main"
@@ -33,3 +48,9 @@ package-dir = {"" = "inference"}
 
 [tool.setuptools.packages.find]
 where = ["inference"]
+
+[tool.pytest.ini_options]
+markers = [
+    "slow: end-to-end tests that download the model and run full inference",
+    "gpu: tests that require a CUDA GPU",
+]
