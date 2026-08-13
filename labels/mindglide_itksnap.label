@@ -1,0 +1,36 @@
+################################################
+# ITK-SnAP Label Description File
+# File format:
+# IDX   -R-  -G-  -B-  -A--  VIS MSH  LABEL
+# Fields:
+#    IDX:   Zero-based index
+#    -R-:   Red color component (0..255)
+#    -G-:   Green color component (0..255)
+#    -B-:   Blue color component (0..255)
+#    -A-:   Label transparency (0.00 .. 1.00)
+#    VIS:   Label visibility (0 or 1)
+#    MSH:   Label mesh visibility (0 or 1)
+#  LABEL:   Label description
+#
+# mindGlide segmentation labels (MS-PINPOINT/mindGlide)
+################################################
+    0     0    0    0     0  1  1    "Background"
+    1   108  180  255     1  1  1    "CSF"
+    2    42  110  235     1  1  1    "Ventricles_3_4_5"
+    3   170   80  205     1  1  1    "DGM"
+    4   255  170   60     1  1  1    "Pons"
+    5   230  115   25     1  1  1    "Brainstem"
+    6    76  187  100     1  1  1    "Cerebellum"
+    7   235  205   60     1  1  1    "Temporal_lobe"
+    8    90  220  220     1  1  1    "Temporal_horn_lateral_ventricle"
+    9    25   70  190     1  1  1    "Lateral_ventricle"
+   10   255  120  185     1  1  1    "Optic_chiasm"
+   11    25  130   65     1  1  1    "Cerebellar_vermis"
+   12   205  165   95     1  1  1    "Corpus_callosum"
+   13   245  245  235     1  1  1    "White_matter"
+   14   240  140  115     1  1  1    "Frontal_lobe_GM"
+   15   165  110   55     1  1  1    "Limbic_cortex_GM"
+   16   130   90  235     1  1  1    "Parietal_lobe_GM"
+   17    95  200  160     1  1  1    "Occipital_lobe_GM"
+   18   230   30   30     1  1  1    "Lesion"
+   19   255  220  120     1  1  1    "Ventral_diencephalon"

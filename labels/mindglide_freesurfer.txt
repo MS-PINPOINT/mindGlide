@@ -1,0 +1,24 @@
+# mindGlide color lookup table (MS-PINPOINT/mindGlide)
+# Usage: freeview -v seg.nii.gz:colormap=lut:lut=mindglide_freesurfer.txt
+#
+#No. Label Name:                                R    G    B    A
+0    Background                               0    0    0    0
+1    CSF                                      108  180  255  0
+2    Ventricles_3_4_5                         42   110  235  0
+3    DGM                                      170  80   205  0
+4    Pons                                     255  170  60   0
+5    Brainstem                                230  115  25   0
+6    Cerebellum                               76   187  100  0
+7    Temporal_lobe                            235  205  60   0
+8    Temporal_horn_lateral_ventricle          90   220  220  0
+9    Lateral_ventricle                        25   70   190  0
+10   Optic_chiasm                             255  120  185  0
+11   Cerebellar_vermis                        25   130  65   0
+12   Corpus_callosum                          205  165  95   0
+13   White_matter                             245  245  235  0
+14   Frontal_lobe_GM                          240  140  115  0
+15   Limbic_cortex_GM                         165  110  55   0
+16   Parietal_lobe_GM                         130  90   235  0
+17   Occipital_lobe_GM                        95   200  160  0
+18   Lesion                                   230  30   30   0
+19   Ventral_diencephalon                     255  220  120  0
