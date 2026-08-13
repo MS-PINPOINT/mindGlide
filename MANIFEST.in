@@ -1,0 +1,5 @@
+recursive-include tests *.py
+prune assets
+exclude Dockerfile .dockerignore .gitattributes .gitmodules
+recursive-exclude * __pycache__
+recursive-exclude * *.py[cod]

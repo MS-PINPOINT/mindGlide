@@ -1,22 +1,37 @@
 [build-system]
-requires = ["setuptools"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "mindglide"
-version = "1.1.0"
+version = "1.2.0"
 description = "Ultrafast segmentation of real-world brain MRI for multiple-sclerosis patients — any modality, any quality."
 readme = "README.md"
 requires-python = ">=3.9"
-license = { text = "MIT" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [
     { name = "MS-PINPOINT team" },
 ]
+keywords = [
+    "mri",
+    "brain",
+    "segmentation",
+    "multiple-sclerosis",
+    "neuroimaging",
+    "deep-learning",
+    "monai",
+]
 classifiers = [
-    "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Science/Research",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
     "Topic :: Scientific/Engineering :: Medical Science Apps.",
 ]
 dependencies = [
@@ -28,7 +43,8 @@ dependencies = [
     "monai == 1.*",
     "huggingface_hub",
     "scikit-image",
-    "pandas"
+    "scipy",
+    "pandas",
 ]
 
 [project.optional-dependencies]
@@ -36,6 +52,8 @@ test = ["pytest"]
 
 [project.urls]
 Homepage = "https://github.com/MS-PINPOINT/mindGlide"
+Repository = "https://github.com/MS-PINPOINT/mindGlide"
+Issues = "https://github.com/MS-PINPOINT/mindGlide/issues"
 Paper = "https://www.nature.com/articles/s41467-025-58274-8"
 Models = "https://huggingface.co/MS-PINPOINT/mindglide"
 
@@ -48,9 +66,21 @@ package-dir = {"" = "inference"}
 
 [tool.setuptools.packages.find]
 where = ["inference"]
+namespaces = false
 
 [tool.pytest.ini_options]
 markers = [
     "slow: end-to-end tests that download the model and run full inference",
     "gpu: tests that require a CUDA GPU",
 ]
+
+[tool.ruff]
+target-version = "py39"
+line-length = 110
+src = ["inference", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "B", "UP"]
+
+[tool.ruff.lint.isort]
+known-first-party = ["mindglide"]

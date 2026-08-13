@@ -2,16 +2,17 @@ import os
 
 import torch
 from monai.networks.nets import DynUNet
-from .consts import DEEP_SUPR_NUM, PATCH_SIZE, SPACING, PROPERTIES
+
+from .consts import DEEP_SUPR_NUM, PATCH_SIZE, PROPERTIES, SPACING
 
 
 def get_kernels_strides(sizes=PATCH_SIZE, spacings=SPACING):
     """
-    This function is only used for decathlon datasets with the provided patch sizes.
-    When refering this method for other tasks, please ensure that the patch size for each spatial dimension should
-    be divisible by the product of all strides in the corresponding dimension.
-    In addition, the minimal spatial size should have at least one dimension that has twice the size of
-    the product of all strides. For patch sizes that cannot find suitable strides, an error will be raised.
+    Compute DynUNet kernel sizes and strides for the MindGlide patch size and
+    spacing (adapted from the MONAI DynUNet tutorial).
+    The patch size in each spatial dimension must be divisible by the product of
+    all strides in that dimension, and at least one dimension must be twice the
+    product of all strides; otherwise a ValueError is raised.
     """
     input_size = sizes
     strides, kernels = [], []
@@ -24,7 +25,8 @@ def get_kernels_strides(sizes=PATCH_SIZE, spacings=SPACING):
         for idx, (i, j) in enumerate(zip(sizes, stride)):
             if i % j != 0:
                 raise ValueError(
-                    f"Patch size is not supported, please try to modify the size {input_size[idx]} in the spatial dimension {idx}."
+                    f"Patch size is not supported, please try to modify the size "
+                    f"{input_size[idx]} in the spatial dimension {idx}."
                 )
         sizes = [i / j for i, j in zip(sizes, stride)]
         spacings = [i * j for i, j in zip(spacings, stride)]
@@ -56,6 +58,6 @@ def get_network(device, properties=PROPERTIES, checkpoint_path=None, deep_supr_n
 
     if checkpoint_path is not None:
         if not os.path.exists(checkpoint_path):
-            raise Exception('Error: specified checkpoint not found.')
+            raise FileNotFoundError(f"Model checkpoint not found: {checkpoint_path}")
         net.load_state_dict(torch.load(checkpoint_path, weights_only=True, map_location=device))
     return net

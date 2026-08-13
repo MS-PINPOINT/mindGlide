@@ -1,8 +1,9 @@
 import os
+import shutil
 import urllib.request
 
-import numpy as np
 import nibabel as nib
+import numpy as np
 import pytest
 
 # Public brain MRI used for end-to-end tests: the MNI152 (2009c asymmetric)
@@ -17,7 +18,8 @@ MNI_URL = (
 def mni_t1(tmp_path_factory):
     """Download (once per session) a public MNI152 T1 template, 2 mm resolution."""
     cache = tmp_path_factory.mktemp("data") / "mni_t1_2mm.nii.gz"
-    urllib.request.urlretrieve(MNI_URL, cache)
+    with urllib.request.urlopen(MNI_URL, timeout=60) as response, open(cache, "wb") as fh:
+        shutil.copyfileobj(response, fh)
     return cache
 
 

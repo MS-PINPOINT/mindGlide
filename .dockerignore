@@ -1,2 +1,9 @@
-container/*.sif
-debug_output
+# Allowlist: only what `pip install .` needs goes into the build context.
+*
+!pyproject.toml
+!MANIFEST.in
+!README.md
+!LICENSE
+!inference/
+inference/**/__pycache__
+inference/*.egg-info

@@ -1,9 +1,8 @@
+import argparse
 import os
 import sys
-import argparse
 import warnings
 from pathlib import Path
-warnings.filterwarnings("ignore")
 
 CITATION = """
 If you use this tool, please cite the original MindGlide paper:
@@ -17,6 +16,10 @@ Nature Communications, 16(1), 3149.
 
 HF_REPO_ID = "MS-PINPOINT/mindglide"
 HF_MODEL_FILENAME = "_20240404_conjurer_trained_dice_7733.pt"
+# Pin the exact model-repo commit so a fresh install always downloads the same
+# weights, even if the Hugging Face repo's main branch moves. Bump deliberately
+# when releasing new weights.
+HF_MODEL_REVISION = "a1969821c0a4a37ae54f649a9a0c6fd1b8a48e26"
 
 NIFTI_SUFFIXES = ('.nii', '.nii.gz')
 
@@ -103,6 +106,19 @@ def resolve_device(choice="auto"):
     return torch.device(choice)
 
 
+def _check_no_overwrite(inp_files, out_files):
+    """Refuse any plan in which an output path would overwrite an input scan."""
+    inputs = {os.path.realpath(f) for f in inp_files}
+    clobbered = [o for o in out_files if os.path.realpath(o) in inputs]
+    if clobbered:
+        listing = '\n'.join(f"  - {c}" for c in clobbered)
+        sys.exit(
+            "Error: refusing to overwrite input scan(s) with segmentation output:\n"
+            f"{listing}\n"
+            "Choose a different output path."
+        )
+
+
 def collect_io(inp, out, resume=False):
     """
     Validate input/output paths and return the list of (input, output) file
@@ -128,6 +144,10 @@ def collect_io(inp, out, resume=False):
             os.makedirs(parent, exist_ok=True)
         except OSError as e:
             sys.exit(f"Error: cannot create output directory {parent}: {e}")
+        if resume and os.path.exists(out):
+            print(f"Resuming: output already exists, skipping ({out}).")
+            return [], []
+        _check_no_overwrite([inp], [out])
         return [inp], [out]
 
     # --- directory mode -----------------------------------------------------
@@ -137,27 +157,37 @@ def collect_io(inp, out, resume=False):
                 f"Error: input is a directory but output ({out}) is an existing file.\n"
                 "When -i is a directory, -o must be a directory."
             )
+        if is_nifti(out) and not os.path.isdir(out):
+            sys.exit(
+                f"Error: -i is a directory, so -o must be an output directory\n"
+                f"(got what looks like a NIfTI filename: {out})."
+            )
         try:
             os.makedirs(out, exist_ok=True)
         except OSError as e:
             sys.exit(f"Error: cannot create output directory {out}: {e}")
 
-        ignore_scans = set()
         if resume:
-            print('Resuming: skipping scans already segmented in the output directory.')
-            ignore_scans = {
-                f.split('_seg.')[0] for f in os.listdir(out) if '_seg.' in f
-            }
+            print('Resuming: skipping scans whose segmentation already exists '
+                  'in the output directory.')
 
         inp_files, out_files = [], []
-        skipped = []
+        skipped, seg_inputs = [], []
+        n_niftis = 0
         for f in sorted(os.listdir(inp)):
             full = os.path.join(inp, f)
             if not os.path.isfile(full) or not is_nifti(f):
                 skipped.append(f)
                 continue
+            n_niftis += 1
             stem, ext = nifti_stem(f)
-            if stem in ignore_scans:
+            if stem.endswith('_seg'):
+                # Almost certainly a previous MindGlide output (e.g. when the
+                # input and output directories are the same); segmenting a
+                # segmentation is never useful.
+                seg_inputs.append(f)
+                continue
+            if resume and os.path.exists(os.path.join(out, f"{stem}_seg.{ext}")):
                 continue
             inp_files.append(full)
             out_files.append(os.path.join(out, f"{stem}_seg.{ext}"))
@@ -166,8 +196,21 @@ def collect_io(inp, out, resume=False):
             print(f"Note: ignoring {len(skipped)} non-NIfTI entr{'y' if len(skipped)==1 else 'ies'} "
                   f"in the input directory: {', '.join(skipped[:5])}"
                   + (' ...' if len(skipped) > 5 else ''))
-        if not inp_files and not resume:
+        if seg_inputs:
+            print(f"Note: ignoring {len(seg_inputs)} file{'s' if len(seg_inputs) != 1 else ''} "
+                  f"that look like previous segmentations (*_seg): {', '.join(seg_inputs[:5])}"
+                  + (' ...' if len(seg_inputs) > 5 else ''))
+        if n_niftis == 0:
             sys.exit(f"Error: no NIfTI files (.nii / .nii.gz) found in directory: {inp}")
+
+        # Distinct inputs (e.g. scan.nii vs SCAN.nii.gz) must never share an output.
+        dupes = sorted({o for o in out_files if out_files.count(o) > 1})
+        if dupes:
+            listing = '\n'.join(f"  - {d}" for d in dupes)
+            sys.exit(f"Error: multiple input files map to the same output file:\n{listing}\n"
+                     "Rename the conflicting inputs.")
+
+        _check_no_overwrite(inp_files, out_files)
         return inp_files, out_files
 
     # --- neither ------------------------------------------------------------
@@ -181,7 +224,7 @@ def collect_io(inp, out, resume=False):
 def resolve_model_path(cli_model_path=None):
     """
     Resolve the model checkpoint. Priority:
-    1) --model_path CLI argument
+    1) --model-path CLI argument
     2) MODEL_PATH environment variable
     3) automatic download from the Hugging Face Hub (cached after first run)
     """
@@ -202,15 +245,26 @@ def resolve_model_path(cli_model_path=None):
     from huggingface_hub import hf_hub_download
     try:
         return Path(
-            hf_hub_download(repo_id=HF_REPO_ID, filename=HF_MODEL_FILENAME)
+            hf_hub_download(
+                repo_id=HF_REPO_ID,
+                filename=HF_MODEL_FILENAME,
+                revision=HF_MODEL_REVISION,
+            )
         )
     except Exception as e:
         sys.exit(
             "Error: could not download the MindGlide model weights (~123 MB) from the\n"
             f"Hugging Face Hub ({HF_REPO_ID}). If you are offline, download the file\n"
-            f"once from https://huggingface.co/{HF_REPO_ID} and pass it with --model_path.\n"
+            f"once from https://huggingface.co/{HF_REPO_ID} and pass it with --model-path.\n"
             f"Reason: {e}"
         )
+
+
+def positive_int(value):
+    ivalue = int(value)
+    if ivalue < 1:
+        raise argparse.ArgumentTypeError(f"must be a positive integer (got {value})")
+    return ivalue
 
 
 def parse_args(argv=None):
@@ -239,7 +293,7 @@ def parse_args(argv=None):
         help="Path to the output NIfTI file, or output directory when -i is a directory."
     )
     parser.add_argument(
-        "--model_path", "--model-path",
+        "--model-path", "--model_path",
         dest="model_path",
         type=str,
         default=None,
@@ -253,19 +307,19 @@ def parse_args(argv=None):
         help="Compute device (default: auto — picks GPU if available, else CPU)."
     )
     parser.add_argument(
-        '--sw_batch_size', '--sw-batch-size',
+        '--sw-batch-size', '--sw_batch_size',
         dest='sw_batch_size',
-        type=int,
+        type=positive_int,
         default=4,
         help="Sliding-window batch size (default: 4). Lower this if you run out of GPU memory."
     )
     parser.add_argument(
         '--resume',
         action='store_true',
-        help="Skip scans that have already been segmented in the output directory."
+        help="Skip scans whose segmentation already exists at the output location."
     )
     parser.add_argument(
-        '--no_klc', '--no-klc',
+        '--no-klc', '--no_klc',
         dest='no_klc',
         action='store_true',
         help="Disable 'Keep Largest Component' post-processing."
@@ -292,12 +346,18 @@ def main():
     """
     Runs the MindGlide model inference on NIfTI file(s).
     """
+    # CLI-only: keep terminal output clean. Deliberately inside main() so that
+    # importing mindglide as a library does not silence the host's warnings.
+    warnings.filterwarnings("ignore")
+
     args = parse_args()
 
     print(CITATION)
 
-    # Validate I/O before loading the heavy libraries so user errors fail fast.
+    # Validate paths before loading the heavy libraries so user errors fail fast.
     inp_files, out_files = collect_io(args.i, args.o, resume=args.resume)
+    if args.model_path is not None and not Path(args.model_path).is_file():
+        sys.exit(f"Error: model checkpoint not found: {args.model_path}")
 
     if len(inp_files) == 0:
         print('Found 0 new images to segment. Exiting.')
@@ -305,18 +365,17 @@ def main():
 
     print(f"Found {len(inp_files)} image{'s' if len(inp_files) != 1 else ''} to process.")
 
-    import numpy as np
     import nibabel as nib
+    import numpy as np
     import torch
+    from monai.data import DataLoader, Dataset
+    from monai.inferers import SlidingWindowInferer
+    from monai.transforms import AsDiscrete
     from tqdm import tqdm
 
-    from monai.inferers import SlidingWindowInferer
-    from monai.data import Dataset, DataLoader
-    from monai.transforms import AsDiscrete
-
-    from mindglide.network import get_network
-    from mindglide.transforms import get_transforms, recovery_prediction, keep_largest_component
     from mindglide.consts import PATCH_SIZE, PROPERTIES
+    from mindglide.network import get_network
+    from mindglide.transforms import get_transforms, keep_largest_component, recovery_prediction
 
     DEVICE = resolve_device(args.device)
     print(f"Using device: {DEVICE}")
@@ -327,29 +386,8 @@ def main():
     num_classes = len(PROPERTIES['labels'])
     as_discrete = AsDiscrete(argmax=True, to_onehot=num_classes)
 
-    # ===============================================
-    # Download and initialise the model.
-    # ===============================================
-    model_path = resolve_model_path(args.model_path)
-
-    # Instantiate MindGlide network and load weights
-    net = get_network(checkpoint_path=model_path, device=DEVICE)
-    net = net.eval()
-
-    # Instantiate the sliding window inferer for memory-efficient processing
-    patch_inferer = SlidingWindowInferer(
-        roi_size=PATCH_SIZE,
-        sw_batch_size=args.sw_batch_size,
-        overlap=0.5,
-        mode='gaussian',
-    )
-
-    # ===============================================
-    # Prepare the datasets.
-    # ===============================================
-
-    # Cheap preflight (header read only): report unreadable files one by one
-    # instead of crashing the whole run inside a DataLoader worker.
+    # Cheap preflight (header read only): report unreadable files one by one.
+    # Runs before the model download so a bad batch fails fast.
     n_ok, failed = 0, []
     readable = []
     for f, o in zip(inp_files, out_files):
@@ -358,7 +396,29 @@ def main():
             readable.append((f, o))
         except Exception as e:
             failed.append(f)
-            print(f"⚠️ Skipping unreadable NIfTI file: {f}\nReason: {e}")
+            print(f"Warning: skipping unreadable NIfTI file: {f}\nReason: {e}")
+
+    # ===============================================
+    # Download and initialise the model.
+    # ===============================================
+    if readable:
+        model_path = resolve_model_path(args.model_path)
+
+        # Instantiate MindGlide network and load weights
+        net = get_network(checkpoint_path=model_path, device=DEVICE)
+        net = net.eval()
+
+        # Instantiate the sliding window inferer for memory-efficient processing
+        patch_inferer = SlidingWindowInferer(
+            roi_size=PATCH_SIZE,
+            sw_batch_size=args.sw_batch_size,
+            overlap=0.5,
+            mode='gaussian',
+        )
+
+    # ===============================================
+    # Prepare the dataset.
+    # ===============================================
 
     # convert for MONAI dataset class formatting
     data = [{'image': f, 'output': o} for f, o in readable]
@@ -370,13 +430,39 @@ def main():
     dataloader = DataLoader(dataset, batch_size=1, shuffle=False, num_workers=num_workers)
 
     # ===============================================
-    # Run the inference script
+    # Run the inference loop
     # ===============================================
 
+    def save_atomically(nifti_img, out_path):
+        # Write to a temp file in the same directory, then rename into place, so
+        # an interrupted run can never leave a truncated *_seg file behind
+        # (which --resume would otherwise treat as done). The temp name keeps
+        # the full NIfTI suffix so nibabel still applies gzip compression.
+        tmp_path = os.path.join(os.path.dirname(out_path) or '.',
+                                f".tmp{os.getpid()}-{os.path.basename(out_path)}")
+        try:
+            nib.save(nifti_img, tmp_path)
+            os.replace(tmp_path, out_path)
+        finally:
+            if os.path.exists(tmp_path):
+                os.remove(tmp_path)
+
+    # Batches arrive in dataset order (batch_size=1, shuffle=False), so `cursor`
+    # always indexes the scan the next batch belongs to. Fetching is inside the
+    # guard because a corrupt data payload with an intact header passes the
+    # preflight and only fails inside the DataLoader worker.
     with torch.inference_mode():
-        for batch in tqdm(dataloader, desc="Segmenting Images"):
-            scan_name = str(batch['image_meta_dict']['filename_or_obj'][0])
+        loader = iter(dataloader)
+        cursor = 0
+        progress = tqdm(total=len(data), desc="Segmenting Images")
+        while cursor < len(data):
+            scan_name = data[cursor]['image']
             try:
+                try:
+                    batch = next(loader)
+                except StopIteration:
+                    break
+
                 images = batch['image'].to(DEVICE)
                 opaths = batch['output']
 
@@ -398,7 +484,7 @@ def main():
                     # space. To do this, we need some metadata that have been stored
                     # by the `PreprocessAnisotropic` transform.
                     resample_flag       = batch["resample_flag"][idx].item()
-                    anisotrophy_flag    = batch["anisotrophy_flag"][idx].item()
+                    anisotropy_flag     = batch["anisotropy_flag"][idx].item()
                     crop_shape          = batch["crop_shape"][idx].tolist()
                     original_shape      = batch["original_shape"][idx].tolist()
                     bbox                = batch["bbox"][idx].tolist()
@@ -409,7 +495,7 @@ def main():
                     # [K, H, W, D] volume, so only the resampled path pays for one.
                     if resample_flag:
                         pred = as_discrete(predictions[idx])
-                        pred = recovery_prediction(pred, [num_classes, *crop_shape], anisotrophy_flag)
+                        pred = recovery_prediction(pred, [num_classes, *crop_shape], anisotropy_flag)
                         pred = np.argmax(pred, axis=0)
                     else:
                         pred = predictions[idx].argmax(dim=0).numpy()
@@ -430,7 +516,8 @@ def main():
                     current_orientation = nib.orientations.io_orientation(current_affine)
 
                     if not np.all(current_orientation == original_orientation):
-                        back_to_orig_ornt = nib.orientations.ornt_transform(current_orientation, original_orientation)
+                        back_to_orig_ornt = nib.orientations.ornt_transform(
+                            current_orientation, original_orientation)
                         nifti_img = nifti_img.as_reoriented(back_to_orig_ornt)
 
                     # Keep the largest component of the segmentation (removes small regions
@@ -438,21 +525,29 @@ def main():
                     if not args.no_klc:
                         nifti_img = keep_largest_component(nifti_img)
 
-                    # Save the output.
-                    nib.save(nifti_img, opaths[idx])
+                    save_atomically(nifti_img, opaths[idx])
                     n_ok += 1
 
             except Exception as e:
                 failed.append(scan_name)
-                print(f"\n⚠️ Error processing scan: {scan_name}")
+                print(f"\nError processing scan: {scan_name}")
                 print(f"Reason: {e}")
                 if DEVICE.type == 'cuda' and 'out of memory' in str(e).lower():
-                    print("Hint: reduce --sw_batch_size (e.g. --sw_batch_size 1) "
+                    print("Hint: reduce --sw-batch-size (e.g. --sw-batch-size 1) "
                           "or run with --device cpu.")
                 if DEVICE.type == 'mps':
                     print("Hint: some 3D operations are not supported on Apple MPS. "
                           "Try --device cpu, or set PYTORCH_ENABLE_MPS_FALLBACK=1.")
-                continue
+
+            cursor += 1
+            progress.update(1)
+        progress.close()
+
+        # If the loader stopped early (e.g. a wedged worker pool), account for
+        # every scan so the summary and exit code stay truthful.
+        for entry in data[cursor:]:
+            failed.append(entry['image'])
+            print(f"\nError: scan was never processed (data loader stopped early): {entry['image']}")
 
     # ===============================================
     # Summarise
