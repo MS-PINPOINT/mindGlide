@@ -1,0 +1,26 @@
+# Publishes to PyPI when a GitHub release is published.
+#
+# One-time setup required before this works: on pypi.org, add a "trusted
+# publisher" for this repository (project: mindglide, owner: MS-PINPOINT,
+# repository: mindGlide, workflow: publish.yml, environment: pypi). No API
+# tokens or secrets are needed after that.
+name: Publish to PyPI
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    environment: pypi
+    permissions:
+      id-token: write # OIDC for PyPI trusted publishing
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: pipx run build
+      - run: pipx run twine check dist/*
+      - uses: pypa/gh-action-pypi-publish@release/v1

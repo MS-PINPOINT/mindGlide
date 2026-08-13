@@ -1,22 +1,22 @@
-import numpy as np
 import nibabel as nib
+import numpy as np
 from monai.transforms import (
     CastToTyped,
     Compose,
     EnsureChannelFirstd,
+    EnsureTyped,
     LoadImaged,
+    MapTransform,
     NormalizeIntensity,
+    Orientationd,
     SpatialCrop,
     ToTensord,
-    EnsureTyped,
-    Orientationd
 )
-from monai.transforms import MapTransform
 from monai.transforms.utils import generate_spatial_bounding_box
-from skimage.transform import resize
 from scipy import ndimage
+from skimage.transform import resize
 
-from .consts import CLIP_VALUES, SPACING, NORMALIZE_VALUES
+from .consts import CLIP_VALUES, NORMALIZE_VALUES, SPACING
 
 
 def get_transforms(no_reorient: bool = False):
@@ -41,7 +41,7 @@ def get_transforms(no_reorient: bool = False):
     transforms_list += [
         anisotropy_process,
         # Warning: we assume that all the transforms that follow PreprocessAnisotropic
-        # do not modify the affine matrix of the image (we checkpoint the affine stored 
+        # do not modify the affine matrix of the image (we checkpoint the affine stored
         # into the MetaTensor, as the metadata are lost by this transform). We need this
         # to recover the orientation of the output segmentation.
         ToTensord(keys="image"),
@@ -52,10 +52,10 @@ def get_transforms(no_reorient: bool = False):
     return Compose(transforms_list)
 
 
-def recovery_prediction(prediction, shape, anisotrophy_flag):
+def recovery_prediction(prediction, shape, anisotropy_flag):
     reshaped = np.zeros(shape, dtype=np.uint8)
     n_class = shape[0]
-    if anisotrophy_flag:
+    if anisotropy_flag:
         c, h, w = prediction.shape[:-1]
         d = shape[-1]
         reshaped_d = np.zeros((c, h, w, d), dtype=np.uint8)
@@ -133,7 +133,7 @@ class PreprocessAnisotropic(MapTransform):
         new_shape = (spacing_ratio * np.array(shape)).astype(int).tolist()
         return new_shape
 
-    def check_anisotrophy(self, spacing):
+    def check_anisotropy(self, spacing):
         def check(spacing):
             return np.max(spacing) / np.min(spacing) >= 3
 
@@ -146,8 +146,8 @@ class PreprocessAnisotropic(MapTransform):
 
         # We can't use d['image_meta_dict']['affine'] here because it does
         # not reflect the actual affine of the image: the MONAI transforms
-        # (e.g., OrientationD) do not modify the `image_meta_dict`. Let's 
-        # use the MetaTensor affine instead (which tracks these transforms). 
+        # (e.g., OrientationD) do not modify the `image_meta_dict`. Let's
+        # use the MetaTensor affine instead (which tracks these transforms).
         image_spacings = list(image.pixdim.numpy())
 
         # This Transform destroys the MetaTensor metadata by turning it into
@@ -164,18 +164,18 @@ class PreprocessAnisotropic(MapTransform):
         original_shape = image.shape[1:]
         # calculate shape
         resample_flag = False
-        anisotrophy_flag = False
+        anisotropy_flag = False
 
         image = image.numpy()
         if self.target_spacing != image_spacings:
             # resample
             resample_flag = True
             resample_shape = self.calculate_new_shape(image_spacings, original_shape)
-            anisotrophy_flag = self.check_anisotrophy(image_spacings)
-            image = resample_image(image, resample_shape, anisotrophy_flag)
+            anisotropy_flag = self.check_anisotropy(image_spacings)
+            image = resample_image(image, resample_shape, anisotropy_flag)
 
         d["resample_flag"] = resample_flag
-        d["anisotrophy_flag"] = anisotrophy_flag
+        d["anisotropy_flag"] = anisotropy_flag
         # clip image for CT dataset
         if self.low != 0 or self.high != 0:
             image = np.clip(image, self.low, self.high)
@@ -188,9 +188,9 @@ class PreprocessAnisotropic(MapTransform):
         return d
 
 
-def resample_image(image, shape, anisotrophy_flag):
+def resample_image(image, shape, anisotropy_flag):
     resized_channels = []
-    if anisotrophy_flag:
+    if anisotropy_flag:
         for image_c in image:
             resized_slices = []
             for i in range(image_c.shape[-1]):
@@ -238,7 +238,7 @@ def keep_largest_component(segm: nib.Nifti1Image) -> nib.Nifti1Image:
     """
     # get_fdata returns float64; we copy it to avoid modifying the source in-place
     seg_data = segm.get_fdata().copy()
-    
+
     # find connected components
     labeled, num_features = ndimage.label(seg_data > 0)
 
@@ -249,15 +249,15 @@ def keep_largest_component(segm: nib.Nifti1Image) -> nib.Nifti1Image:
 
     # count the labels in the segmentation (skip first index which is background)
     sizes = np.bincount(labeled.ravel())[1:]
-    
-    # Get the label with the highest count. 
+
+    # Get the label with the highest count.
     # argmax returns 0-based index, so we add 1 to match the label value.
     largest_component_label = sizes.argmax() + 1
 
     # Zero out everything that isn't the largest component
     seg_data[labeled != largest_component_label] = 0
 
-    # Cast data back to original dtype (or uint8/int16) 
+    # Cast data back to original dtype (or uint8/int16)
     # to avoid saving a massive float64 file.
     cleaned_data = seg_data.astype(segm.dataobj.dtype)
 

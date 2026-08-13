@@ -8,8 +8,8 @@ full inference, so they are skipped unless MINDGLIDE_RUN_SLOW=1 is set:
 import subprocess
 import sys
 
-import numpy as np
 import nibabel as nib
+import numpy as np
 import pytest
 import torch
 
@@ -17,7 +17,7 @@ import torch
 def run_cli(*cli_args):
     return subprocess.run(
         [sys.executable, "-m", "mindglide.infer", *cli_args],
-        capture_output=True, text=True,
+        capture_output=True, text=True, timeout=1800,
     )
 
 
@@ -73,3 +73,25 @@ class TestEndToEnd:
         assert result.returncode != 0
         output = result.stdout + result.stderr
         assert "unreadable" in output and "Finished with errors" in output
+
+    def test_truncated_payload_does_not_kill_batch(self, mni_t1, tmp_path):
+        """A file with a valid header but corrupt payload passes the header
+        preflight; it must fail cleanly inside the loop, and the other scan in
+        the batch must still be segmented."""
+        inp = tmp_path / "in"
+        inp.mkdir()
+        (inp / "good.nii.gz").write_bytes(mni_t1.read_bytes())
+        whole = mni_t1.read_bytes()
+        (inp / "truncated.nii.gz").write_bytes(whole[: len(whole) // 2])
+
+        out = tmp_path / "out"
+        result = run_cli("-i", str(inp), "-o", str(out), "--device", "cpu")
+        output = result.stdout + result.stderr
+        assert result.returncode != 0
+        # The run must survive the loader failure: the failure is attributed to
+        # the bad file, the summary still prints, and the good scan completes.
+        # (torch embeds the worker's traceback in the exception text we relay,
+        # so we assert on the summary rather than on the absence of tracebacks.)
+        assert "Finished with errors" in result.stdout
+        assert "truncated.nii.gz" in result.stdout
+        check_segmentation(out / "good_seg.nii.gz", mni_t1)

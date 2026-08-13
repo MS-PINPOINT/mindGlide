@@ -7,7 +7,13 @@
 Built with PyTorch + MONAI, trained on >23 000 scans.
 [Nature Communications (2025)](https://www.nature.com/articles/s41467-025-58274-8)
 
-<img src="assets/t2.png" alt="MindGlide segmentation example" width="500">
+[![CI](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml/badge.svg)](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/MS-PINPOINT/mindGlide/blob/main/LICENSE)
+[![Python ≥3.9](https://img.shields.io/badge/python-%E2%89%A53.9-blue.svg)](https://github.com/MS-PINPOINT/mindGlide)
+[![DOI](https://img.shields.io/badge/DOI-10.1038%2Fs41467--025--58274--8-blue)](https://doi.org/10.1038/s41467-025-58274-8)
+[![Model on HF](https://img.shields.io/badge/%F0%9F%A4%97%20Model-MS--PINPOINT%2Fmindglide-orange)](https://huggingface.co/MS-PINPOINT/mindglide)
+
+<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/t2.png" alt="MindGlide segmentation example" width="500">
 
 </div>
 
@@ -20,7 +26,13 @@ mindglide -i scan.nii.gz -o scan_seg.nii.gz
 
 That's it. Python ≥ 3.9; runs on GPU (seconds per scan) or CPU (a few minutes) —
 picked automatically. The trained model (~123 MB) downloads and caches on first
-run. Point `-i` at a folder to segment every NIfTI file in it.
+run. Point `-i` at a folder to segment every NIfTI file in it:
+
+```bash
+mindglide -i scans/ -o segs/   # writes segs/<name>_seg.nii.gz for every scan
+```
+
+(`python -m mindglide …` works too.)
 
 No scan at hand? Try the public MNI152 template:
 
@@ -83,6 +95,9 @@ unsupported, run with `--device cpu` or set `PYTORCH_ENABLE_MPS_FALLBACK=1`.
 [the checkpoint](https://huggingface.co/MS-PINPOINT/mindglide/tree/main) once
 and pass `--model-path /path/to/model.pt` (or set `MODEL_PATH`).
 
+**Model cache location** — the auto-downloaded model lives in the Hugging Face
+cache (`~/.cache/huggingface` by default); set `HF_HOME` to move it.
+
 </details>
 
 <details>
@@ -96,10 +111,11 @@ cd mindGlide
 docker build -t mindglide .
 ```
 
-Run (drop `--gpus all` on CPU-only hosts):
+Run (drop `--gpus all` on CPU-only hosts; `--user` makes the output files owned
+by you rather than the container user):
 
 ```bash
-docker run --gpus all --ipc=host -v /data:/data \
+docker run --gpus all --ipc=host --user $(id -u):$(id -g) -v /data:/data \
   mindglide -i /data/scan.nii.gz -o /data/scan_seg.nii.gz
 ```
 
@@ -188,5 +204,5 @@ NIHR302495). The views expressed are those of the author(s) and not
 necessarily those of the NIHR or the Department of Health and Social Care.
 
 <p align="left">
-  <img src="assets/nihr_logo.png" alt="NIHR logo" width="200">
+  <img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/nihr_logo.png" alt="NIHR logo" width="200">
 </p>

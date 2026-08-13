@@ -1,8 +1,8 @@
 """Unit tests for the command-line interface plumbing (fast, no model needed)."""
 import os
 
-import numpy as np
 import nibabel as nib
+import numpy as np
 import pytest
 
 from mindglide.infer import collect_io, is_nifti, nifti_stem, parse_args, resolve_model_path
@@ -134,3 +134,92 @@ class TestResolveModelPath:
         env_ckpt.write_bytes(b"x")
         monkeypatch.setenv("MODEL_PATH", str(env_ckpt))
         assert resolve_model_path(None) == env_ckpt
+
+
+class TestOverwriteGuards:
+    def test_single_file_same_input_output_refused(self, tmp_path):
+        scan = tmp_path / "scan.nii.gz"
+        make_nifti(scan)
+        with pytest.raises(SystemExit) as e:
+            collect_io(str(scan), str(scan))
+        assert "refusing to overwrite" in str(e.value)
+
+    def test_seg_inputs_skipped_in_directory_mode(self, tmp_path, capsys):
+        inp = tmp_path / "d"
+        inp.mkdir()
+        make_nifti(inp / "scan.nii.gz")
+        make_nifti(inp / "scan_seg.nii.gz")
+        ins, outs = collect_io(str(inp), str(inp))
+        assert [os.path.basename(f) for f in ins] == ["scan.nii.gz"]
+        assert "previous segmentations" in capsys.readouterr().out
+
+    def test_case_variant_inputs_colliding_on_output_refused(self, tmp_path):
+        inp = tmp_path / "d"
+        inp.mkdir()
+        make_nifti(inp / "scan.nii.gz")
+        make_nifti(inp / "scan.NII.GZ")
+        with pytest.raises(SystemExit) as e:
+            collect_io(str(inp), str(tmp_path / "out"))
+        assert "same output file" in str(e.value)
+
+
+class TestResumeSemantics:
+    def test_resume_is_extension_precise(self, tmp_path):
+        inp = tmp_path / "in"
+        out = tmp_path / "out"
+        inp.mkdir()
+        out.mkdir()
+        make_nifti(inp / "scan.nii")
+        make_nifti(inp / "scan.nii.gz")
+        make_nifti(out / "scan_seg.nii")  # only the .nii variant is done
+        ins, _ = collect_io(str(inp), str(out), resume=True)
+        assert [os.path.basename(f) for f in ins] == ["scan.nii.gz"]
+
+    def test_resume_ignores_unrelated_seg_named_files(self, tmp_path):
+        inp = tmp_path / "in"
+        out = tmp_path / "out"
+        inp.mkdir()
+        out.mkdir()
+        make_nifti(inp / "notes.nii.gz")
+        (out / "notes_seg.txt").write_text("a QC log, not a segmentation")
+        ins, _ = collect_io(str(inp), str(out), resume=True)
+        assert [os.path.basename(f) for f in ins] == ["notes.nii.gz"]
+
+    def test_resume_single_file_skips_existing_output(self, tmp_path, capsys):
+        scan = tmp_path / "scan.nii.gz"
+        seg = tmp_path / "seg.nii.gz"
+        make_nifti(scan)
+        make_nifti(seg)
+        ins, outs = collect_io(str(scan), str(seg), resume=True)
+        assert ins == [] and outs == []
+        assert "skipping" in capsys.readouterr().out
+
+    def test_resume_does_not_mask_empty_directory_error(self, tmp_path):
+        inp = tmp_path / "in"
+        inp.mkdir()
+        (inp / "README").write_text("no niftis here")
+        with pytest.raises(SystemExit) as e:
+            collect_io(str(inp), str(tmp_path / "out"), resume=True)
+        assert "no NIfTI" in str(e.value)
+
+
+class TestArgValidation:
+    def test_directory_input_with_nifti_named_output_refused(self, tmp_path):
+        inp = tmp_path / "in"
+        inp.mkdir()
+        make_nifti(inp / "scan.nii.gz")
+        with pytest.raises(SystemExit) as e:
+            collect_io(str(inp), str(tmp_path / "segs.nii.gz"))
+        assert "output directory" in str(e.value)
+
+    def test_sw_batch_size_must_be_positive(self, capsys):
+        for bad in ["0", "-2"]:
+            with pytest.raises(SystemExit):
+                parse_args(["-i", "a.nii.gz", "-o", "b.nii.gz", "--sw-batch-size", bad])
+
+    def test_help_lists_hyphenated_spellings_first(self, capsys):
+        with pytest.raises(SystemExit):
+            parse_args(["--help"])
+        helptext = capsys.readouterr().out
+        assert "--model-path" in helptext and "--sw-batch-size" in helptext
+        assert helptext.index("--model-path") < helptext.index("--model_path")
