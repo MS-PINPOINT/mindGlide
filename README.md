@@ -7,6 +7,7 @@
 Built with PyTorch + MONAI, trained on >23 000 scans.
 [Nature Communications (2025)](https://www.nature.com/articles/s41467-025-58274-8)
 
+[![PyPI](https://img.shields.io/pypi/v/mindglide)](https://pypi.org/project/mindglide/)
 [![CI](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml/badge.svg)](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/MS-PINPOINT/mindGlide/blob/main/LICENSE)
 [![Python ≥3.9](https://img.shields.io/badge/python-%E2%89%A53.9-blue.svg)](https://github.com/MS-PINPOINT/mindGlide)
@@ -20,7 +21,7 @@ Built with PyTorch + MONAI, trained on >23 000 scans.
 ## Get started
 
 ```bash
-pip install git+https://github.com/MS-PINPOINT/mindGlide.git
+pip install mindglide
 mindglide -i scan.nii.gz -o scan_seg.nii.gz
 ```
 
@@ -83,7 +84,7 @@ automatically. To use such a GPU, install a compatible PyTorch first:
 
 ```bash
 pip install "torch==2.6.0+cu118" --index-url https://download.pytorch.org/whl/cu118
-pip install git+https://github.com/MS-PINPOINT/mindGlide.git
+pip install mindglide
 ```
 
 **GPU out of memory** — try `--sw-batch-size 1`, or `--device cpu`.
