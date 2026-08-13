@@ -86,7 +86,6 @@ class TestEndToEnd:
 
         out = tmp_path / "out"
         result = run_cli("-i", str(inp), "-o", str(out), "--device", "cpu")
-        output = result.stdout + result.stderr
         assert result.returncode != 0
         # The run must survive the loader failure: the failure is attributed to
         # the bad file, the summary still prints, and the good scan completes.
