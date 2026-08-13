@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 
 from .consts import PROPERTIES
+from .infer import is_nifti
 
 
 def calculate_volumes(seg_file_path):
@@ -57,14 +58,34 @@ def volumes_dataframe(seg_file_path):
     return labels_df
 
 
+def cohort_dataframe(directory):
+    """
+    Return a long-format DataFrame of volumes for every NIfTI label image in a
+    directory (one block of 20 rows per scan, with a leading 'Scan' column).
+    Handy after folder-mode segmentation: one table for the whole cohort.
+    """
+    blocks = []
+    for f in sorted(os.listdir(directory)):
+        full = os.path.join(directory, f)
+        if not os.path.isfile(full) or not is_nifti(f):
+            continue
+        block = volumes_dataframe(full)
+        block.insert(0, "Scan", f)
+        blocks.append(block)
+    if not blocks:
+        raise ValueError(f"no NIfTI label images found in directory: {directory}")
+    return pd.concat(blocks, ignore_index=True)
+
+
 def main():
     parser = argparse.ArgumentParser(
         prog="mindglide-volumes",
-        description="Calculate per-region volumes (mm3) from a MindGlide segmentation."
+        description="Calculate per-region volumes (mm3) from MindGlide segmentations."
     )
     parser.add_argument(
         "label_file",
-        help="Path to a NIfTI label image (e.g. mindglide segmentation output)",
+        help="Path to a NIfTI label image (e.g. mindglide segmentation output), "
+             "or a directory of them for one combined cohort CSV.",
     )
     parser.add_argument(
         "--out-csv",
@@ -74,6 +95,25 @@ def main():
 
     args = parser.parse_args()
 
+    out_csv = os.path.abspath(args.out_csv)
+    if os.path.isdir(out_csv):
+        out_csv = os.path.join(out_csv, "labels.csv")
+        print(f"Note: --out-csv is a directory; writing {out_csv}")
+    os.makedirs(os.path.dirname(out_csv) or ".", exist_ok=True)
+
+    # --- cohort mode: a directory of segmentations -> one long CSV ----------
+    if os.path.isdir(args.label_file):
+        try:
+            df = cohort_dataframe(args.label_file)
+        except ValueError as e:
+            parser.error(str(e))
+        n_scans = df["Scan"].nunique()
+        df.to_csv(out_csv, index=False)
+        print(f"Wrote volumes for {n_scans} scan{'s' if n_scans != 1 else ''} "
+              f"x {df['Label_ID'].nunique()} regions to: {out_csv}")
+        return
+
+    # --- single-file mode ----------------------------------------------------
     if not os.path.isfile(args.label_file):
         parser.error(f"label file not found: {args.label_file}")
     try:
@@ -85,12 +125,6 @@ def main():
         print(f"Warning: {args.label_file} does not look like a MindGlide segmentation "
               "(non-integer values or labels outside 0-19) — did you pass the raw scan "
               "instead of the *_seg output? Writing volumes anyway.")
-
-    out_csv = os.path.abspath(args.out_csv)
-    if os.path.isdir(out_csv):
-        out_csv = os.path.join(out_csv, "labels.csv")
-        print(f"Note: --out-csv is a directory; writing {out_csv}")
-    os.makedirs(os.path.dirname(out_csv) or ".", exist_ok=True)
 
     labels_df = volumes_dataframe(args.label_file)
     labels_df.to_csv(out_csv, index=False)

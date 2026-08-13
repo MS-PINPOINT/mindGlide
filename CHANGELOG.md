@@ -5,6 +5,25 @@ All notable changes to MindGlide are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2026-08-13
+
+### Added
+
+- Python API: `from mindglide import segment` — segment scans from scripts
+  and pipelines with the same (byte-identical) results as the CLI; raises
+  `mindglide.UsageError` for invalid usage. `volumes_dataframe` /
+  `calculate_volumes` are importable from the package root.
+- Cohort volumes: `mindglide-volumes <directory>` writes one combined
+  long-format CSV (Scan, Label_ID, Region_Name, Volume_mm3) for a whole
+  folder of segmentations; also available as
+  `mindglide.volumes.cohort_dataframe`.
+- `mindglide --labels` prints the label code / region name table.
+- Zero-install Colab quickstart notebook (`examples/`), viewer colormaps for
+  ITK-SNAP / FSLeyes / freeview (`labels/`), `CITATION.cff` (GitHub "Cite
+  this repository"), this changelog, and a contributor guide.
+- Prebuilt container images published to GitHub Container Registry
+  (`ghcr.io/ms-pinpoint/mindglide`) on every release.
+
 ## [1.2.0] "Aegis" - 2026-08-13
 
 Hardening, packaging, and automation release — dedicated to protecting your
@@ -72,6 +91,7 @@ data. Segmentation outputs are byte-identical to 1.1.0. First release on PyPI.
 
 - Initial public release of the inference CLI.
 
+[1.3.0]: https://github.com/MS-PINPOINT/mindGlide/releases/tag/v1.3.0
 [1.2.0]: https://github.com/MS-PINPOINT/mindGlide/releases/tag/v1.2.0
 [1.0.1]: https://github.com/MS-PINPOINT/mindGlide/releases/tag/v1.0.1
 [1.0.0]: https://github.com/MS-PINPOINT/mindGlide/releases/tag/v1.0.0

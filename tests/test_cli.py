@@ -5,7 +5,14 @@ import nibabel as nib
 import numpy as np
 import pytest
 
-from mindglide.infer import collect_io, is_nifti, nifti_stem, parse_args, resolve_model_path
+from mindglide.infer import (
+    UsageError,
+    collect_io,
+    is_nifti,
+    nifti_stem,
+    parse_args,
+    resolve_model_path,
+)
 
 
 def make_nifti(path):
@@ -58,14 +65,14 @@ class TestCollectIO:
         assert outs == [str(tmp_path / "scan_seg.nii.gz")]
 
     def test_missing_input_file_errors_cleanly(self, tmp_path):
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(UsageError) as e:
             collect_io(str(tmp_path / "nope.nii.gz"), str(tmp_path / "o.nii.gz"))
         assert "not found" in str(e.value)
 
     def test_non_nifti_output_errors_cleanly(self, tmp_path):
         inp = tmp_path / "scan.nii.gz"
         make_nifti(inp)
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(UsageError) as e:
             collect_io(str(inp), str(tmp_path / "seg.txt"))
         assert ".nii" in str(e.value)
 
@@ -89,7 +96,7 @@ class TestCollectIO:
         inp = tmp_path / "in"
         inp.mkdir()
         (inp / "README").write_text("hello")
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(UsageError) as e:
             collect_io(str(inp), str(tmp_path / "out"))
         assert "no NIfTI" in str(e.value)
 
@@ -99,7 +106,7 @@ class TestCollectIO:
         make_nifti(inp / "scan1.nii.gz")
         out = tmp_path / "existing.nii.gz"
         make_nifti(out)
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(UsageError) as e:
             collect_io(str(inp), str(out))
         assert "directory" in str(e.value)
 
@@ -117,7 +124,7 @@ class TestCollectIO:
 
 class TestResolveModelPath:
     def test_cli_missing_file_errors_cleanly(self):
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(UsageError) as e:
             resolve_model_path("/does/not/exist.pt")
         assert "not found" in str(e.value)
 
@@ -140,7 +147,7 @@ class TestOverwriteGuards:
     def test_single_file_same_input_output_refused(self, tmp_path):
         scan = tmp_path / "scan.nii.gz"
         make_nifti(scan)
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(UsageError) as e:
             collect_io(str(scan), str(scan))
         assert "refusing to overwrite" in str(e.value)
 
@@ -158,7 +165,7 @@ class TestOverwriteGuards:
         inp.mkdir()
         make_nifti(inp / "scan.nii.gz")
         make_nifti(inp / "scan.NII.GZ")
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(UsageError) as e:
             collect_io(str(inp), str(tmp_path / "out"))
         assert "same output file" in str(e.value)
 
@@ -198,7 +205,7 @@ class TestResumeSemantics:
         inp = tmp_path / "in"
         inp.mkdir()
         (inp / "README").write_text("no niftis here")
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(UsageError) as e:
             collect_io(str(inp), str(tmp_path / "out"), resume=True)
         assert "no NIfTI" in str(e.value)
 
@@ -208,7 +215,7 @@ class TestArgValidation:
         inp = tmp_path / "in"
         inp.mkdir()
         make_nifti(inp / "scan.nii.gz")
-        with pytest.raises(SystemExit) as e:
+        with pytest.raises(UsageError) as e:
             collect_io(str(inp), str(tmp_path / "segs.nii.gz"))
         assert "output directory" in str(e.value)
 

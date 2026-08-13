@@ -8,13 +8,14 @@ Built with PyTorch + MONAI, trained on >23 000 scans.
 [Nature Communications (2025)](https://www.nature.com/articles/s41467-025-58274-8)
 
 [![PyPI](https://img.shields.io/pypi/v/mindglide)](https://pypi.org/project/mindglide/)
+[![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MS-PINPOINT/mindGlide/blob/main/examples/mindglide_quickstart.ipynb)
 [![CI](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml/badge.svg)](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/MS-PINPOINT/mindGlide/blob/main/LICENSE)
 [![Python ≥3.9](https://img.shields.io/badge/python-%E2%89%A53.9-blue.svg)](https://github.com/MS-PINPOINT/mindGlide)
 [![DOI](https://img.shields.io/badge/DOI-10.1038%2Fs41467--025--58274--8-blue)](https://doi.org/10.1038/s41467-025-58274-8)
 [![Model on HF](https://img.shields.io/badge/%F0%9F%A4%97%20Model-MS--PINPOINT%2Fmindglide-orange)](https://huggingface.co/MS-PINPOINT/mindglide)
 
-<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/t2.png" alt="MindGlide segmentation example" width="500">
+<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/mni_overlay.png" alt="MindGlide segmentation of the MNI152 template: input scan vs segmented output in three views" width="640">
 
 </div>
 
@@ -25,27 +26,51 @@ pip install mindglide
 mindglide -i scan.nii.gz -o scan_seg.nii.gz
 ```
 
-That's it. Python ≥ 3.9; runs on GPU (seconds per scan) or CPU (a few minutes) —
-picked automatically. The trained model (~123 MB) downloads and caches on first
-run. Point `-i` at a folder to segment every NIfTI file in it:
+That's it — **no preprocessing needed**: no skull-stripping, no bias correction,
+no registration, no reorienting. Python ≥ 3.9; runs on GPU (seconds per scan)
+or CPU (a few minutes) — picked automatically. The trained model (~123 MB)
+downloads and caches on first run. Point `-i` at a folder to segment every
+NIfTI file in it:
 
 ```bash
 mindglide -i scans/ -o segs/   # writes segs/<name>_seg.nii.gz for every scan
 ```
 
-(`python -m mindglide …` works too.)
+Prefer zero installs? **[Try it in your browser on Colab →](https://colab.research.google.com/github/MS-PINPOINT/mindGlide/blob/main/examples/mindglide_quickstart.ipynb)**
 
-No scan at hand? Try the public MNI152 template:
+No scan at hand? Use the public MNI152 template:
 
 ```bash
 curl -O https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz
 mindglide -i tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz -o mni_seg.nii.gz
 ```
 
-To get per-region volumes (mm³) as a CSV:
+## Use from Python
+
+```python
+from mindglide import segment, volumes_dataframe
+
+seg_path = segment("scan.nii.gz")            # writes scan_seg.nii.gz
+df = volumes_dataframe(seg_path)             # per-region volumes in mm³
+segment("scans_dir/", "segs_dir/")           # whole folder
+```
+
+Same engine as the CLI, byte-identical outputs, clean exceptions
+(`mindglide.UsageError`) instead of exit codes.
+
+## From scans to statistics
+
+Segment a cohort, then get **one CSV for the whole study**:
 
 ```bash
-mindglide-volumes scan_seg.nii.gz --out-csv scan_volumes.csv
+mindglide -i scans/ -o segs/ --resume        # resumable folder-mode segmentation
+mindglide-volumes segs/ --out-csv cohort.csv # one long-format table for all scans
+```
+
+```python
+import pandas as pd
+df = pd.read_csv("cohort.csv")               # columns: Scan, Label_ID, Region_Name, Volume_mm3
+lesions = df[df.Region_Name == "Lesion"]     # e.g. lesion volume per scan
 ```
 
 ## Options
@@ -55,11 +80,14 @@ mindglide-volumes scan_seg.nii.gz --out-csv scan_volumes.csv
 | `--device {auto,cpu,cuda,mps}` | Compute device (default: auto — a working GPU if present, else CPU). |
 | `--sw-batch-size N` | Sliding-window batch size (default 4). Lower it if the GPU runs out of memory. |
 | `--model-path FILE` | Use a local `.pt` checkpoint instead of the automatic download (offline use). |
-| `--resume` | Folder mode: skip scans already segmented in the output folder. |
+| `--resume` | Skip scans whose segmentation already exists at the output location. |
 | `--no-klc` | Keep all connected components (skip largest-component cleanup). |
 | `--no-reorient` | Skip internal RAS re-orientation. Output always matches the input scan's grid. |
+| `--labels` | Print the label code / region name table and exit. |
 
 ## Output labels
+
+19 regions + background (`mindglide --labels` prints this table):
 
 | Code | Structure                       | Code | Structure                 |
 |:----:|:--------------------------------|:----:|:--------------------------|
@@ -74,8 +102,40 @@ mindglide-volumes scan_seg.nii.gz --out-csv scan_volumes.csv
 | 8    | Temporal_horn_lateral_ventricle | 18   | Lesion                    |
 | 9    | Lateral_ventricle               | 19   | Ventral_diencephalon      |
 
+**See named, colored regions in your viewer** — ready-made colormaps live in
+[`labels/`](labels/):
+
+```bash
+fsleyes scan.nii.gz scan_seg.nii.gz -ot label -l labels/mindglide_fsleyes.lut
+freeview -v scan.nii.gz scan_seg.nii.gz:colormap=lut:lut=labels/mindglide_freesurfer.txt
+# ITK-SNAP: Segmentation > Label Editor > Actions > Import label descriptions
+```
+
+## What can I feed it?
+
+- **Any single MRI modality** — T1, T2, FLAIR, PD, post-contrast; one image per
+  scan (no multi-channel input needed).
+- **Any quality** — designed for real-world clinical archives: 2D thick-slice
+  acquisitions, anisotropic voxels, and older scans, as well as research-grade
+  3D images. Resampling and reorientation happen internally; the output always
+  lands back on the input scan's grid.
+- Validated in the [Nature Communications study](https://www.nature.com/articles/s41467-025-58274-8)
+  on tens of thousands of scans from MS clinical archives and trials, where it
+  measured established treatment effects from scans conventional pipelines
+  cannot process.
+
+**Intended use**: research only. MindGlide is not a medical device and must not
+be used for clinical decision-making.
+
+**Speed** (measured): seconds per scan on a modern CUDA GPU (~10 s including
+model load on a 2016-era Quadro P6000); ~1.5 min for a 2 mm scan and a few
+minutes for a 1 mm scan on a multi-core CPU.
+
 <details>
-<summary><strong>Troubleshooting</strong></summary>
+<summary><strong>Troubleshooting & FAQ</strong></summary>
+
+**Do I need to skull-strip / bias-correct / register first?** — No. Feed the
+raw NIfTI.
 
 **"Warning: not using the GPU — … this PyTorch build cannot run on it"** —
 the default `pip` PyTorch wheels no longer include kernels for older GPUs
@@ -99,33 +159,37 @@ and pass `--model-path /path/to/model.pt` (or set `MODEL_PATH`).
 **Model cache location** — the auto-downloaded model lives in the Hugging Face
 cache (`~/.cache/huggingface` by default); set `HF_HOME` to move it.
 
+**Can I fine-tune it?** — The original container-based training/fine-tuning
+pipeline is preserved at the
+[`legacy-container`](https://github.com/MS-PINPOINT/mindGlide/tree/legacy-container)
+tag. Open a [Discussion](https://github.com/MS-PINPOINT/mindGlide/discussions)
+if you're interested.
+
 </details>
 
 <details>
 <summary><strong>Docker / Apptainer</strong></summary>
 
-Build once (model weights are baked in, so the container works offline):
+Prebuilt images (model weights baked in — works offline; ~8 GB with the CUDA
+runtime) are published on every release:
 
 ```bash
-git clone https://github.com/MS-PINPOINT/mindGlide.git
-cd mindGlide
-docker build -t mindglide .
-```
+docker pull ghcr.io/ms-pinpoint/mindglide:latest
 
-Run (drop `--gpus all` on CPU-only hosts; `--user` makes the output files owned
-by you rather than the container user):
-
-```bash
+# run on a folder ( --user keeps output files owned by you; drop --gpus all on CPU-only hosts )
 docker run --gpus all --ipc=host --user $(id -u):$(id -g) -v /data:/data \
-  mindglide -i /data/scan.nii.gz -o /data/scan_seg.nii.gz
+  ghcr.io/ms-pinpoint/mindglide:latest -i /data/scan.nii.gz -o /data/scan_seg.nii.gz
 ```
 
 For Apptainer/Singularity on HPC:
 
 ```bash
-apptainer build mindglide.sif docker-daemon://mindglide:latest
+apptainer pull mindglide.sif docker://ghcr.io/ms-pinpoint/mindglide:latest
 apptainer run --nv -B /data:/data mindglide.sif -i /data/scan.nii.gz -o /data/scan_seg.nii.gz
 ```
+
+To build the image yourself instead: `git clone` this repo and
+`docker build -t mindglide .`
 
 </details>
 
@@ -135,8 +199,9 @@ apptainer run --nv -B /data:/data mindglide.sif -i /data/scan.nii.gz -o /data/sc
 The checkpoint (`_20240404_conjurer_trained_dice_7733.pt`) is downloaded
 automatically from
 [Hugging Face: MS-PINPOINT/mindglide](https://huggingface.co/MS-PINPOINT/mindglide)
-on first run. Additional and legacy checkpoints are archived in the same
-repository. Models were trained on the datasets described in the
+on first run, pinned to an exact revision for reproducibility. Additional and
+legacy checkpoints are archived in the same repository. Models were trained on
+the datasets described in the
 [paper](https://www.nature.com/articles/s41467-025-58274-8).
 
 From a source checkout you can also fetch the weights as a git submodule
@@ -161,16 +226,16 @@ pytest                          # fast unit tests (seconds, no model download)
 MINDGLIDE_RUN_SLOW=1 pytest -v  # + end-to-end on a public MNI scan (CPU, and GPU if present)
 ```
 
-The original container-based training/fine-tuning pipeline was retired from
-the main branch and is preserved at the
-[`legacy-container`](https://github.com/MS-PINPOINT/mindGlide/tree/legacy-container)
-tag.
+See [CONTRIBUTING.md](CONTRIBUTING.md). Changes to the numerical path must
+produce byte-identical segmentations (the e2e tests check real outputs on
+public data).
 
 </details>
 
 ## Citation
 
-If you use MindGlide, please cite:
+If you use MindGlide, please cite (or use GitHub's *Cite this repository*
+button):
 
 > Goebl P, Wingrove J, Abdelmannan O, *et al.* Enabling new insights from old
 > scans by repurposing clinical MRI archives for multiple sclerosis research.
