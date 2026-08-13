@@ -113,6 +113,15 @@ freeview -v scan.nii.gz scan_seg.nii.gz:colormap=lut:lut=labels/mindglide_freesu
 
 ## What can I feed it?
 
+<div align="center">
+<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/any_modality_any_quality.png" alt="MindGlide segmentations of five very different inputs — 3T T2w, 3D FLAIR, 7T PD, a thick-slice clinical 2D FLAIR with lesions, and a T2w from a 64 mT portable scanner — same model, no preprocessing" width="900">
+
+*One model, no preprocessing, no retuning — from a 64 mT portable scanner to
+7 T, research-grade 3D to thick-slice clinical 2D, including brains with
+extensive pathology (red = lesion label). Openly licensed public scans;
+unedited MindGlide output.*
+</div>
+
 - **Any single MRI modality** — T1, T2, FLAIR, PD, post-contrast; one image per
   scan (no multi-channel input needed).
 - **Any quality** — designed for real-world clinical archives: 2D thick-slice
