@@ -5,6 +5,15 @@ All notable changes to MindGlide are documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+### Added
+
+- README "any modality, any quality" gallery: real MindGlide segmentations of
+  five openly licensed public scans — 3 T T2w, 3D FLAIR, 7 T PD, a thick-slice
+  clinical 2D FLAIR with lesions, and a T2w from a 64 mT portable scanner
+  (`assets/any_modality_any_quality.png`).
+
 ## [1.3.0] - 2026-08-13
 
 ### Added
