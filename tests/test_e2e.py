@@ -94,3 +94,21 @@ class TestEndToEnd:
         assert "Finished with errors" in result.stdout
         assert "truncated.nii.gz" in result.stdout
         check_segmentation(out / "good_seg.nii.gz", mni_t1)
+
+
+@pytest.mark.slow
+def test_python_api_matches_cli(mni_t1, tmp_path):
+    """mindglide.segment() must produce byte-identical output to the CLI."""
+    import gzip
+
+    from mindglide import segment
+
+    api_out = tmp_path / "api_seg.nii.gz"
+    returned = segment(mni_t1, api_out, device="cpu")
+    assert str(returned) == str(api_out)
+
+    cli_out = tmp_path / "cli_seg.nii.gz"
+    result = run_cli("-i", str(mni_t1), "-o", str(cli_out), "--device", "cpu")
+    assert result.returncode == 0, result.stdout + result.stderr
+
+    assert gzip.decompress(api_out.read_bytes()) == gzip.decompress(cli_out.read_bytes())

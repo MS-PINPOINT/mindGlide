@@ -63,3 +63,21 @@ def test_looks_like_segmentation(tmp_path):
 
     intensity = np.random.default_rng(0).normal(500, 100, (6, 6, 6)).astype(np.float32)
     assert not looks_like_segmentation(save_seg(tmp_path / "raw.nii.gz", intensity))
+
+
+def test_cohort_dataframe(tmp_path):
+    from mindglide.volumes import cohort_dataframe
+
+    for name, label in [("a_seg.nii.gz", 13), ("b_seg.nii.gz", 18)]:
+        data = np.zeros((4, 4, 4), dtype=np.uint8)
+        data[0] = label
+        save_seg(tmp_path / name, data)
+    df = cohort_dataframe(tmp_path)
+    assert list(df.columns) == ["Scan", "Label_ID", "Region_Name", "Volume_mm3"]
+    assert df.Scan.nunique() == 2 and len(df) == 40
+    assert df[(df.Scan == "b_seg.nii.gz") & (df.Label_ID == 18)].Volume_mm3.item() == 16.0
+
+    with pytest.raises(ValueError):
+        empty = tmp_path / "empty"
+        empty.mkdir()
+        cohort_dataframe(empty)
