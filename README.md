@@ -2,7 +2,7 @@
 
 # MindGlide
 
-**Brain MRI segmentation for multiple sclerosis — any modality, any quality.**
+**Brain MRI segmentation for multiple sclerosis — any sequence, any quality.**
 
 Built with PyTorch + MONAI, trained on >23 000 scans.
 [Nature Communications (2025)](https://www.nature.com/articles/s41467-025-58274-8)
@@ -15,7 +15,7 @@ Built with PyTorch + MONAI, trained on >23 000 scans.
 [![DOI](https://img.shields.io/badge/DOI-10.1038%2Fs41467--025--58274--8-blue)](https://doi.org/10.1038/s41467-025-58274-8)
 [![Model on HF](https://img.shields.io/badge/%F0%9F%A4%97%20Model-MS--PINPOINT%2Fmindglide-orange)](https://huggingface.co/MS-PINPOINT/mindglide)
 
-<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/any_modality_any_quality.png" alt="MindGlide segmentations of five very different inputs — 3T T2w, 3D FLAIR, 7T PD, a thick-slice clinical 2D FLAIR with lesions, and a T2w from a 64 mT portable scanner — same model, no preprocessing" width="900">
+<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/any_sequence_any_quality.png" alt="MindGlide segmentations of five very different inputs — 3T T2w, 3D FLAIR, 7T PD, a thick-slice clinical 2D FLAIR with lesions, and a T2w from a 64 mT portable scanner — same model, no preprocessing" width="900">
 
 *One model, no preprocessing, no retuning — from a 64 mT portable scanner to
 7 T, research-grade 3D to thick-slice clinical 2D, including brains with
@@ -124,7 +124,7 @@ freeview -v scan.nii.gz scan_seg.nii.gz:colormap=lut:lut=labels/mindglide_freesu
 
 ## What can I feed it?
 
-- **Any single MRI modality** — T1, T2, FLAIR, PD, post-contrast; one image per
+- **Any single MRI sequence** — T1, T2, FLAIR, PD, post-contrast; one image per
   scan (no multi-channel input needed).
 - **Any quality** — designed for real-world clinical archives: 2D thick-slice
   acquisitions, anisotropic voxels, and older scans, as well as research-grade

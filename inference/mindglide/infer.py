@@ -527,7 +527,7 @@ def parse_args(argv=None):
     parser = argparse.ArgumentParser(
         prog="mindglide",
         description="MindGlide: brain MRI segmentation for multiple sclerosis "
-                    "(any modality, any quality). Works on GPU or CPU.",
+                    "(any sequence, any quality). Works on GPU or CPU.",
         epilog="Examples:\n"
                "  mindglide -i scan.nii.gz -o scan_seg.nii.gz\n"
                "  mindglide -i scans_dir/ -o segmentations_dir/\n"

@@ -9,10 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- README "any modality, any quality" gallery: real MindGlide segmentations of
-  five openly licensed public scans — 3 T T2w, 3D FLAIR, 7 T PD, a thick-slice
-  clinical 2D FLAIR with lesions, and a T2w from a 64 mT portable scanner
-  (`assets/any_modality_any_quality.png`).
+- README "any sequence, any quality" hero gallery: real MindGlide
+  segmentations of five openly licensed public scans — 3 T T2w, 3D FLAIR,
+  7 T PD, a thick-slice clinical 2D FLAIR with lesions, and a T2w from a
+  64 mT portable scanner (`assets/any_sequence_any_quality.png`).
+
+### Changed
+
+- Terminology: "any modality" → "any sequence" across the README, package
+  metadata, CLI help, and quickstart notebook (T1/T2/FLAIR/PD are MRI
+  sequences; modality would imply CT/PET too).
 
 ## [1.3.0] - 2026-08-13
 
