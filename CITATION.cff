@@ -1,0 +1,85 @@
+cff-version: 1.2.0
+message: >-
+  If you use MindGlide, please cite the paper referenced in
+  preferred-citation (Goebl et al., Nature Communications, 2025).
+title: MindGlide
+type: software
+authors:
+  - name: MS-PINPOINT team
+    website: https://github.com/MS-PINPOINT
+repository-code: https://github.com/MS-PINPOINT/mindGlide
+url: https://github.com/MS-PINPOINT/mindGlide
+license: MIT
+version: 1.2.0
+date-released: '2026-08-13'
+keywords:
+  - multiple sclerosis
+  - brain MRI
+  - image segmentation
+  - lesion segmentation
+  - neuroimaging
+  - deep learning
+  - medical imaging
+  - MONAI
+  - PyTorch
+preferred-citation:
+  type: article
+  title: >-
+    Enabling new insights from old scans by repurposing clinical MRI
+    archives for multiple sclerosis research
+  journal: Nature Communications
+  volume: 16
+  issue: 1
+  start: 3149
+  year: 2025
+  month: 4
+  doi: 10.1038/s41467-025-58274-8
+  authors:
+    - family-names: Goebl
+      given-names: Philipp
+    - family-names: Wingrove
+      given-names: Jed
+    - family-names: Abdelmannan
+      given-names: Omar
+    - family-names: Brito Vega
+      given-names: Barbara
+    - family-names: Stutters
+      given-names: Jonathan
+    - family-names: Ramos
+      given-names: Silvia Da Graca
+    - family-names: Kenway
+      given-names: Owain
+    - family-names: Rossor
+      given-names: Thomas
+    - family-names: Wassmer
+      given-names: Evangeline
+    - family-names: Arnold
+      given-names: Douglas L.
+    - family-names: Collins
+      given-names: Louis
+    - family-names: Hemingway
+      given-names: Cheryl
+    - family-names: Narayanan
+      given-names: Sridar
+    - family-names: Chataway
+      given-names: Jeremy
+    - family-names: Chard
+      given-names: Declan
+    - family-names: Iglesias
+      given-names: Juan Eugenio
+    - family-names: Barkhof
+      given-names: Frederik
+    - family-names: Parker
+      given-names: Geoffrey J. M.
+    - family-names: Oxtoby
+      given-names: Neil P.
+    - family-names: Hacohen
+      given-names: Yael
+    - family-names: Thompson
+      given-names: Alan
+    - family-names: Alexander
+      given-names: Daniel C.
+    - family-names: Ciccarelli
+      given-names: Olga
+    - family-names: Eshaghi
+      given-names: Arman
