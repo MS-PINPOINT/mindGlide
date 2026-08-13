@@ -15,7 +15,12 @@ Built with PyTorch + MONAI, trained on >23 000 scans.
 [![DOI](https://img.shields.io/badge/DOI-10.1038%2Fs41467--025--58274--8-blue)](https://doi.org/10.1038/s41467-025-58274-8)
 [![Model on HF](https://img.shields.io/badge/%F0%9F%A4%97%20Model-MS--PINPOINT%2Fmindglide-orange)](https://huggingface.co/MS-PINPOINT/mindglide)
 
-<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/mni_overlay.png" alt="MindGlide segmentation of the MNI152 template: input scan vs segmented output in three views" width="640">
+<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/any_modality_any_quality.png" alt="MindGlide segmentations of five very different inputs — 3T T2w, 3D FLAIR, 7T PD, a thick-slice clinical 2D FLAIR with lesions, and a T2w from a 64 mT portable scanner — same model, no preprocessing" width="900">
+
+*One model, no preprocessing, no retuning — from a 64 mT portable scanner to
+7 T, research-grade 3D to thick-slice clinical 2D, including brains with
+extensive pathology (red = lesion label). Openly licensed public scans;
+unedited MindGlide output.*
 
 </div>
 
@@ -44,6 +49,12 @@ No scan at hand? Use the public MNI152 template:
 curl -O https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz
 mindglide -i tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz -o mni_seg.nii.gz
 ```
+
+<div align="center">
+<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/mni_overlay.png" alt="MindGlide segmentation of the MNI152 template: input scan vs segmented output in three views" width="640">
+
+*What that command produces: the MNI152 template, segmented.*
+</div>
 
 ## Use from Python
 
@@ -112,15 +123,6 @@ freeview -v scan.nii.gz scan_seg.nii.gz:colormap=lut:lut=labels/mindglide_freesu
 ```
 
 ## What can I feed it?
-
-<div align="center">
-<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/any_modality_any_quality.png" alt="MindGlide segmentations of five very different inputs — 3T T2w, 3D FLAIR, 7T PD, a thick-slice clinical 2D FLAIR with lesions, and a T2w from a 64 mT portable scanner — same model, no preprocessing" width="900">
-
-*One model, no preprocessing, no retuning — from a 64 mT portable scanner to
-7 T, research-grade 3D to thick-slice clinical 2D, including brains with
-extensive pathology (red = lesion label). Openly licensed public scans;
-unedited MindGlide output.*
-</div>
 
 - **Any single MRI modality** — T1, T2, FLAIR, PD, post-contrast; one image per
   scan (no multi-channel input needed).
