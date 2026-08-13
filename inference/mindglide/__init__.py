@@ -1,4 +1,4 @@
-"""MindGlide: brain MRI segmentation for multiple sclerosis — any modality, any quality.
+"""MindGlide: brain MRI segmentation for multiple sclerosis — any sequence, any quality.
 
 Command line:  ``mindglide -i scan.nii.gz -o scan_seg.nii.gz``  (and ``mindglide-volumes``).
 

@@ -5,7 +5,9 @@ NORMALIZE_VALUES    = [0, 1]
 DEEP_SUPR_NUM       = 3
 
 
-# Model I/O contract: one input channel (any MRI modality), 20 output labels.
+# Model I/O contract: one input channel (any MRI sequence), 20 output labels.
+# NB: the 'modality' dict key below is the nnU-Net/MONAI properties naming
+# convention and must not be renamed.
 PROPERTIES = {
     'name': 'MindGlide',
     'modality': {'0': 'receives only one and any modality.'},
