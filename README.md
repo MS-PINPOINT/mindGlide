@@ -1,50 +1,60 @@
 <div align="center">
 
-# MindGlide
+# 🧠 MindGlide
 
-**Brain MRI segmentation for multiple sclerosis — any sequence, any quality.**
+### The Universal Brain MRI Segmentation Tool for Multiple Sclerosis
+**Any Sequence. Any Quality. Zero Preprocessing.**
 
-Built with PyTorch + MONAI, trained on >23 000 scans.
-[Nature Communications (2025)](https://www.nature.com/articles/s41467-025-58274-8)
+Built with **PyTorch + MONAI** | Trained on **>23,000** real-world scans | Published in **[Nature Communications](https://doi.org/10.1038/s41467-025-58274-8)**
 
-[![PyPI](https://img.shields.io/pypi/v/mindglide)](https://pypi.org/project/mindglide/)
+[![PyPI](https://img.shields.io/pypi/v/mindglide?style=flat-square&color=blue)](https://pypi.org/project/mindglide/)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MS-PINPOINT/mindGlide/blob/main/examples/mindglide_quickstart.ipynb)
-[![CI](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml/badge.svg)](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml)
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/MS-PINPOINT/mindGlide/blob/main/LICENSE)
-[![Python ≥3.9](https://img.shields.io/badge/python-%E2%89%A53.9-blue.svg)](https://github.com/MS-PINPOINT/mindGlide)
-[![DOI](https://img.shields.io/badge/DOI-10.1038%2Fs41467--025--58274--8-blue)](https://doi.org/10.1038/s41467-025-58274-8)
-[![Model on HF](https://img.shields.io/badge/%F0%9F%A4%97%20Model-MS--PINPOINT%2Fmindglide-orange)](https://huggingface.co/MS-PINPOINT/mindglide)
+[![CI](https://img.shields.io/github/actions/workflow/status/MS-PINPOINT/mindGlide/ci.yml?style=flat-square&logo=github)](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://github.com/MS-PINPOINT/mindGlide/blob/main/LICENSE)
+[![Python ≥3.9](https://img.shields.io/badge/Python-%E2%89%A53.9-blue.svg?style=flat-square&logo=python&logoColor=white)](https://github.com/MS-PINPOINT/mindGlide)
+[![DOI](https://img.shields.io/badge/DOI-10.1038%2Fs41467--025--58274--8-blue?style=flat-square)](https://doi.org/10.1038/s41467-025-58274-8)
+[![Model on HF](https://img.shields.io/badge/%F0%9F%A4%97%20Model-MS--PINPOINT%2Fmindglide-orange?style=flat-square)](https://huggingface.co/MS-PINPOINT/mindglide)
 
-<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/any_sequence_any_quality.png" alt="MindGlide segmentations of five very different inputs — 3T T2w, 3D FLAIR, 7T PD, a thick-slice clinical 2D FLAIR with lesions, and a T2w from a 64 mT portable scanner — same model, no preprocessing" width="900">
+<br>
 
-*One model, no preprocessing, no retuning — from a 64 mT portable scanner to
-7 T, research-grade 3D to thick-slice clinical 2D, including brains with
-extensive pathology (red = lesion label). Openly licensed public scans;
-unedited MindGlide output.*
+<img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/any_sequence_any_quality.png" alt="MindGlide segmentations of five very different inputs" width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
 
+*One model, no preprocessing, no retuning — from a 64 mT portable scanner to 7 T, research-grade 3D to thick-slice clinical 2D. Openly licensed public scans; unedited MindGlide output.*
 </div>
 
-## Get started
+<br>
+
+## ✨ Why MindGlide?
+- 🚀 **Zero Preprocessing:** Feed it raw NIfTI files. No skull-stripping, no bias correction, no registration, no reorienting needed.
+- 💻 **Dead Simple:** One command to segment a single scan or an entire folder.
+- ⚡ **Lightning Fast:** Seconds per scan on a GPU, or just a few minutes on a CPU.
+- 🏥 **Robust:** Handles clinical archives out-of-the-box, no matter how old or unusual the sequence.
+
+---
+
+## 🚀 Get Started in 3 Seconds
+
+You are just one command away from segmented scans.
 
 ```bash
+# 1. Install
 pip install mindglide
+
+# 2. Run
 mindglide -i scan.nii.gz -o scan_seg.nii.gz
 ```
 
-That's it — **no preprocessing needed**: no skull-stripping, no bias correction,
-no registration, no reorienting. Python ≥ 3.9; runs on GPU (seconds per scan)
-or CPU (a few minutes) — picked automatically. The trained model (~123 MB)
-downloads and caches on first run. Point `-i` at a folder to segment every
-NIfTI file in it:
+That's it! The model (~123 MB) downloads and caches automatically on the first run.
 
+### 📂 Process an entire folder instantly
+Got an archive of scans? MindGlide handles it gracefully:
 ```bash
 mindglide -i scans/ -o segs/   # writes segs/<name>_seg.nii.gz for every scan
 ```
 
 Prefer zero installs? **[Try it in your browser on Colab →](https://colab.research.google.com/github/MS-PINPOINT/mindGlide/blob/main/examples/mindglide_quickstart.ipynb)**
 
-No scan at hand? Use the public MNI152 template:
-
+### 🧠 No scan at hand? Try the public MNI152 template:
 ```bash
 curl -O https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz
 mindglide -i tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz -o mni_seg.nii.gz
@@ -53,23 +63,31 @@ mindglide -i tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz -o mni_seg.nii.gz
 <div align="center">
 <img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/mni_overlay.png" alt="MindGlide segmentation of the MNI152 template: input scan vs segmented output in three views" width="640">
 
-*What that command produces: the MNI152 template, segmented.*
+*The command above produces the segmented MNI152 template.*
 </div>
 
-## Use from Python
+---
+
+## 🛠️ Seamless Python API
+
+Integrate MindGlide directly into your workflow. It uses the same engine as the CLI, guarantees byte-identical outputs, and provides clean exceptions (`mindglide.UsageError`) instead of exit codes.
 
 ```python
 from mindglide import segment, volumes_dataframe
 
+# Segment a single scan
 seg_path = segment("scan.nii.gz")            # writes scan_seg.nii.gz
-df = volumes_dataframe(seg_path)             # per-region volumes in mm³
-segment("scans_dir/", "segs_dir/")           # whole folder
+
+# Instantly get region volumes in mm³
+df = volumes_dataframe(seg_path)             
+
+# Or process a whole folder
+segment("scans_dir/", "segs_dir/")           
 ```
 
-Same engine as the CLI, byte-identical outputs, clean exceptions
-(`mindglide.UsageError`) instead of exit codes.
+---
 
-## From scans to statistics
+## 📊 From Scans to Statistics
 
 Segment a cohort, then get **one CSV for the whole study**:
 
