@@ -5,7 +5,7 @@
 ### The Universal Brain MRI Segmentation Tool for Multiple Sclerosis
 **Any Sequence. Any Quality. Zero Preprocessing.**
 
-Built with **PyTorch + MONAI** | Trained on **>23,000** real-world scans | Published in **[Nature Communications](https://doi.org/10.1038/s41467-025-58274-8)**
+Built with **PyTorch + MONAI** | Trained on **>23,000** real-world scans | Published in **[Nature Communications](https://doi.org/10.1038/s41467-025-58274-8)** | Project by **[MS-PINPOINT](https://www.ms-pinpoint.com)**
 
 [![PyPI](https://img.shields.io/pypi/v/mindglide?style=flat-square&color=blue)](https://pypi.org/project/mindglide/)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MS-PINPOINT/mindGlide/blob/main/examples/mindglide_quickstart.ipynb)
@@ -293,10 +293,11 @@ button):
 
 ## Acknowledgements
 
-This study/project is funded by the UK National Institute for Health and
-Social Care (NIHR) Advanced Fellowship to Arman Eshaghi (Award ID:
-NIHR302495). The views expressed are those of the author(s) and not
-necessarily those of the NIHR or the Department of Health and Social Care.
+MindGlide is a flagship project of the [MS-PINPOINT](https://www.ms-pinpoint.com) group.
+
+This study and the initial development of this project were funded by the UK National Institute for Health and Care Research (NIHR) Advanced Fellowship to Arman Eshaghi (Award ID: NIHR302495). The views expressed are those of the author(s) and not necessarily those of the NIHR or the Department of Health and Social Care.
+
+As of 2026, the team and this research have transitioned to the **DreaMS Lab** at **King's College London** (Institute of Psychiatry, Psychology & Neuroscience), backed by an 8-year project funded by **Wellcome**.
 
 <p align="left">
   <img src="https://raw.githubusercontent.com/MS-PINPOINT/mindGlide/main/assets/nihr_logo.png" alt="NIHR logo" width="200">
