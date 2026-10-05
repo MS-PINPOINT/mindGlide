@@ -34,9 +34,7 @@ Built with **PyTorch + MONAI** | Trained on **>23,000** real-world scans | Publi
 
 **[Try MindGlide locally in your browser →](https://mindglide.ms-pinpoint.com)**
 
-Your MRI stays on your device: MindGlide segments the brain in place in your browser, without uploading your scan over the internet.
-
-Choose a 3D NIfTI file, or explore the public MNI example. View the segmentation overlay, download a NIfTI result on the original scan grid and export regional volumes. The public engine downloads first; inference uses a supported GPU or a local CPU fallback. Start with a current desktop browser and enough memory; speed and scan-size support vary by device. Research use only.
+Your MRI and results stay on your device. Processing happens locally in your browser.
 
 [Privacy and cookies](https://mindglide.ms-pinpoint.com/privacy.html) · [Browser source and validation](web/README.md)
 
