@@ -85,6 +85,10 @@ def preprocess(raw):
     if any(x < 1 for x in new_shape) or int(np.prod(new_shape)) > MAX_RESAMPLED_VOXELS:
         raise ValueError('The 1 mm working volume exceeds this browser release’s size limit. Use the local Python tool.')
     padded_shape = tuple(max(p, s) for p, s in zip(PATCH, new_shape))
+    if int(np.prod(padded_shape)) > MAX_RESAMPLED_VOXELS:
+        raise ValueError('The padded working volume needs too much browser memory. Use the local Python tool.')
+    if resample and anisotropy and new_shape[0] * new_shape[1] * crop_shape[2] > MAX_RESAMPLED_VOXELS:
+        raise ValueError('Resampling this scan needs too much browser memory. Use the local Python tool.')
     slab_bytes = 21 * padded_shape[0] * padded_shape[1] * PATCH[2] * 4
     if slab_bytes > MAX_ACCUMULATOR_BYTES:
         raise ValueError('The working volume needs too much browser memory. Use the local Python tool.')

@@ -307,7 +307,7 @@ async function showOriginal() {
     await nv.attachToCanvas($("brain"));
     nv.setSliceType(nv.sliceTypeMultiplanar);
   }
-  // FileReader only: no blob URL fetch, filename propagation or remote loader.
+  // Local File stream only: no URL fetch, filename propagation or remote loader.
   const volume = await NVImage.loadFromFile({
     file: new File([original], "local-mri.nii"),
     name: "Local MRI",
@@ -340,6 +340,8 @@ async function choose(file) {
   $("exports").hidden = true;
   $("regions").hidden = true;
   $("result-summary").hidden = true;
+  $("scan-details").hidden = true;
+  $("view-state").textContent = "Preparing local MRI…";
   try {
     original = await file.arrayBuffer();
     const forWorker = original.slice(0);
