@@ -1,0 +1,41 @@
+{
+  "source": {
+    "repo": "MS-PINPOINT/mindglide",
+    "revision": "a1969821c0a4a37ae54f649a9a0c6fd1b8a48e26",
+    "checkpoint": "_20240404_conjurer_trained_dice_7733.pt"
+  },
+  "patch": [
+    128,
+    128,
+    64
+  ],
+  "classes": 20,
+  "overlap": 0.5,
+  "precision": "float32",
+  "opset": 18,
+  "rewrite_count": 5,
+  "shuffle_float64_max_abs": 0.0,
+  "rewrite_max_abs": 0.000152587890625,
+  "rewrite_label_agreement": 1.0,
+  "onnx_max_abs": 0.00128173828125,
+  "onnx_label_agreement": 0.9999914169311523,
+  "operators": [
+    "Concat",
+    "Constant",
+    "Conv",
+    "InstanceNormalization",
+    "LeakyRelu",
+    "Reshape",
+    "Transpose"
+  ],
+  "model": {
+    "file": "mindglide-fp32.onnx",
+    "bytes": 123167936,
+    "sha256": "d3cd4dc3fabca3ed9244836133e1ba55d1be8e68be64a20d08a7dbcd1ddcb73c"
+  },
+  "importance": {
+    "file": "gaussian-f32.bin",
+    "bytes": 4194304,
+    "sha256": "27ec3f7840096b54840ac80f1e3676ed35b6262b9e80cf39692cf0724753ff05"
+  }
+}

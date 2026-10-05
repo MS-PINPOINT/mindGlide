@@ -1,0 +1,86 @@
+{
+  "date": "2026-10-05",
+  "hardware": {
+    "chip": "Apple M1 Ultra",
+    "logical_cpu_cores": 20,
+    "ram_gb": 64
+  },
+  "browser": "Chrome 154.0.8037.97",
+  "model_sha256": "d3cd4dc3fabca3ed9244836133e1ba55d1be8e68be64a20d08a7dbcd1ddcb73c",
+  "checks": {
+    "automatic_backend": "CPU (8 threads), selected after original-patch CPU/GPU warmups",
+    "full_public_mni_cpu": {
+      "shape": [193, 229, 193],
+      "patches": 54,
+      "displayed_time_minutes": 2.3,
+      "overlay_and_19_volume_rows": true,
+      "counts_from_display": [
+        244539, 6497, 52550, 12621, 12534, 177748, 173604, 1051, 26562, 164,
+        10599, 27808, 625787, 272309, 70636, 126006, 92037, 1246, 12515
+      ]
+    },
+    "full_public_mni_gpu": {
+      "patches": 54,
+      "displayed_time_minutes": 6.6,
+      "overlay_and_19_volume_rows": true
+    },
+    "public_crop_cpu": {
+      "crop_coordinates": [
+        [33, 161],
+        [50, 178],
+        [70, 134]
+      ],
+      "displayed_time_seconds": 3,
+      "export_comparison_with_original_pytorch": {
+        "shape": [128, 128, 64],
+        "dtype": "uint8",
+        "affine_max_abs": 0.0,
+        "voxel_agreement": 0.9998245239257812,
+        "different_voxels": 184,
+        "counts": [
+          82940, 80617, 2872, 51068, 0, 1106, 1174, 57237, 44, 29433, 0, 1747,
+          30040, 383971, 134191, 48123, 89849, 46434, 2281, 5449
+        ],
+        "dice": {
+          "1": 0.9995036543448858,
+          "2": 0.9998258749782344,
+          "3": 0.9999216745971137,
+          "5": 1.0,
+          "6": 0.9987239472564866,
+          "7": 0.9997641941991773,
+          "8": 1.0,
+          "9": 0.9997621393863196,
+          "11": 1.0,
+          "12": 0.9998834867424558,
+          "13": 0.9999101453691658,
+          "14": 0.9998099886365753,
+          "15": 0.9996468559795592,
+          "16": 0.999766318741237,
+          "17": 0.9998276938982101,
+          "18": 0.9997808459346921,
+          "19": 0.9998164464023495
+        }
+      }
+    },
+    "local_request_monitor": {
+      "requests_before_scan_selection": 43,
+      "requests_after_scan_selection": 0,
+      "non_get_requests": 0
+    },
+    "malformed_nifti": "Rejected: This file does not contain a complete NIfTI header.",
+    "clear_reset": "Worker and scan buffers released; page reload returns to initial controls.",
+    "post_review_memory_guards": {
+      "native_nifti_regression_tests": 3,
+      "padding_expansion": "Rejected before resizing",
+      "anisotropic_intermediate": "Rejected before resizing",
+      "normal_scan": "Prepares successfully",
+      "environment": "Isolated Python 3.12 / NumPy / SciPy / scikit-image / NiBabel on the authorized local GPU server; no model inference required"
+    }
+  },
+  "limitations": [
+    "Public template and crop only; no patient scans or clinical validation.",
+    "Full-template browser counts were observed; voxel agreement was measured on the browser-exported crop and separately on native full-template ONNX.",
+    "Browser NIfTI bytes were read from a local public-fixture test harness and loaded by native NiBabel. Automated browser download/save dialogs did not complete, so filesystem download clicks are not claimed as verified.",
+    "Safari, Firefox, Windows, Linux, mobile and low-memory devices have not been exercised."
+  ]
+}

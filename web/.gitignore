@@ -1,0 +1,10 @@
+node_modules/
+dist/
+.vercel/
+public/runtime/
+public/model/*
+!public/model/.gitkeep
+public/example/*.nii*
+validation-data/
+.vercel
+.env*

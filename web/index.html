@@ -1,0 +1,300 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      name="description"
+      content="Try MindGlide brain MRI segmentation in your browser. Your MRI stays on your device. Explore brain regions and download a NIfTI segmentation without an account."
+    />
+    <meta name="referrer" content="no-referrer" />
+    <meta name="theme-color" content="#0b1422" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="canonical" href="https://mindglide.ms-pinpoint.com/" />
+    <title>Local in-browser brain segmentation | MindGlide</title>
+  </head>
+  <body>
+    <a class="skip" href="#workspace">Skip to segmentation</a>
+    <header class="site-header wrap">
+      <a class="brand" href="/" aria-label="MindGlide home"
+        ><span class="brand-mark" aria-hidden="true">m</span
+        ><span>MindGlide <small>by MS-PINPOINT</small></span></a
+      >
+      <nav aria-label="Main navigation">
+        <a href="https://www.ms-pinpoint.com/software">The research ↗</a
+        ><a href="https://github.com/MS-PINPOINT/mindGlide">GitHub ↗</a
+        ><a href="/privacy.html">Privacy</a>
+      </nav>
+    </header>
+    <main>
+      <section class="hero wrap" aria-labelledby="title">
+        <div class="eyebrow">
+          <span class="live-dot"></span> OPEN SCIENCE · ON YOUR DEVICE
+        </div>
+        <h1 id="title">
+          Local in-browser<br /><span>brain segmentation.</span>
+        </h1>
+        <p class="lede">
+          Your MRI stays on your device: MindGlide segments the brain in place
+          in your browser, without uploading your scan over the internet.
+        </p>
+        <div class="hero-tags">
+          <span>No account</span><span>No MRI upload</span
+          ><span>19 brain &amp; lesion labels</span>
+        </div>
+      </section>
+      <section
+        class="workspace wrap"
+        id="workspace"
+        aria-label="Local brain segmentation workspace"
+      >
+        <div class="control-panel">
+          <div class="panel-heading">
+            <span class="eyebrow">YOUR LOCAL WORKSPACE</span
+            ><span class="pill" id="engine-badge">Ready to start</span>
+          </div>
+          <ol class="steps">
+            <li id="step-engine" class="active">
+              <span class="step-number">01</span>
+              <div>
+                <h2>Prepare the engine</h2>
+                <p>
+                  Download the public model once. The app checks local CPU and
+                  GPU speed before choosing an engine.
+                </p>
+                <label class="engine-mode"
+                  >Processing
+                  <select id="engine-mode">
+                    <option value="auto">Automatic (checks CPU and GPU)</option>
+                    <option value="cpu">CPU only</option>
+                  </select></label
+                ><button class="button primary" id="boot">
+                  Prepare local engine <span aria-hidden="true">↓</span></button
+                ><small id="download-size"
+                  >First use downloads the model and image-processing
+                  libraries.</small
+                >
+              </div>
+            </li>
+            <li id="step-scan">
+              <span class="step-number">02</span>
+              <div>
+                <h2>Choose your MRI</h2>
+                <p>
+                  One 3D brain volume, in NIfTI format (<code>.nii</code> or
+                  <code>.nii.gz</code>). Or explore a public MNI template.
+                </p>
+                <div class="button-row">
+                  <button class="button secondary" id="choose" disabled>
+                    Choose NIfTI</button
+                  ><button class="text-button" id="example" disabled>
+                    Try public example →
+                  </button>
+                </div>
+                <input
+                  id="file"
+                  type="file"
+                  accept=".nii,.nii.gz"
+                  disabled
+                  hidden
+                />
+                <p id="scan-details" class="scan-details" hidden></p>
+              </div>
+            </li>
+            <li id="step-run">
+              <span class="step-number">03</span>
+              <div>
+                <h2>Segment &amp; explore</h2>
+                <p>
+                  Inspect the overlay and export results on the original scan
+                  grid.
+                </p>
+                <label class="ack"
+                  ><input id="research" type="checkbox" /> I understand this is
+                  a research tool, not a diagnostic or treatment decision
+                  tool.</label
+                ><button class="button primary" id="run" disabled>
+                  Segment this brain <span aria-hidden="true">→</span>
+                </button>
+              </div>
+            </li>
+          </ol>
+          <div
+            class="status"
+            role="status"
+            aria-live="polite"
+            aria-atomic="true"
+          >
+            <span class="status-dot" aria-hidden="true"></span>
+            <p id="status">
+              Prepare the engine to begin. Your scan will stay local.
+            </p>
+          </div>
+          <progress
+            id="progress"
+            max="1"
+            hidden
+            aria-label="Local segmentation progress"
+          ></progress>
+          <div class="control-bottom">
+            <span id="backend">Browser edition · FP32</span
+            ><button id="clear" class="text-button" disabled>
+              Clear &amp; reset
+            </button>
+          </div>
+        </div>
+        <div class="viewer-panel">
+          <div class="viewer-heading">
+            <h2>Brain explorer</h2>
+            <span id="view-state">Awaiting MRI</span>
+          </div>
+          <div class="viewer-stage">
+            <canvas
+              id="brain"
+              aria-label="Interactive axial, coronal and sagittal MRI views. Click to move the crosshair; scroll to browse slices."
+              hidden
+            ></canvas>
+            <div class="viewer-placeholder" id="placeholder">
+              <svg viewBox="0 0 240 260" fill="none" aria-hidden="true">
+                <path
+                  d="M119 34C92 9 49 28 47 60C18 70 17 111 35 128C13 153 35 184 53 187C51 218 84 238 113 221M122 34C149 9 192 28 194 60C223 70 224 111 206 128C228 153 206 184 188 187C190 218 157 238 128 221M120 38V224M76 49C55 57 70 79 56 97M52 112C78 112 59 151 83 159M65 181C91 171 104 186 99 210M88 56C111 65 79 87 94 110M96 129C104 157 99 165 111 178M165 49C186 57 171 79 185 97M189 112C163 112 182 151 158 159M176 181C150 171 137 186 142 210M153 56C130 65 162 87 147 110M145 129C137 157 142 165 130 178"
+                  stroke="currentColor"
+                  stroke-width="2"
+                  stroke-linecap="round"
+                />
+                <circle
+                  cx="120"
+                  cy="126"
+                  r="90"
+                  stroke="currentColor"
+                  stroke-dasharray="3 8"
+                  opacity=".3"
+                />
+              </svg>
+              <h3>A clearer view of your brain.</h3>
+              <p>
+                Your MRI and segmentation will appear here.<br />Nothing is
+                uploaded.
+              </p>
+              <span class="placeholder-caption"
+                >Illustration · no scan loaded</span
+              >
+            </div>
+          </div>
+          <div class="viewer-tools">
+            <p>Click to navigate · scroll through slices</p>
+            <label
+              >Overlay
+              <input
+                id="opacity"
+                aria-label="Segmentation overlay opacity"
+                type="range"
+                min="0"
+                max="100"
+                value="45"
+                disabled
+            /></label>
+          </div>
+          <div class="result-summary" id="result-summary" hidden></div>
+          <div class="exports" id="exports" hidden>
+            <a
+              id="download"
+              class="button primary"
+              download="mindglide-segmentation.nii"
+            >
+              Download segmentation ↓</a
+            ><a
+              id="csv"
+              class="button secondary"
+              download="mindglide-volumes.csv"
+            >
+              Region volumes CSV ↓
+            </a>
+          </div>
+        </div>
+      </section>
+      <section class="below wrap" aria-label="About this browser edition">
+        <div>
+          <span class="eyebrow">ONE SCAN. MORE INSIGHT.</span>
+          <h2>Research you can try.</h2>
+          <p>
+            MindGlide measures brain regions and lesions from a single MRI
+            contrast. This browser edition uses the public trained model at its
+            original working resolution.
+          </p>
+          <a href="https://www.nature.com/articles/s41467-025-58274-8"
+            >Read the Nature Communications paper ↗</a
+          >
+        </div>
+        <div>
+          <h3>What runs here?</h3>
+          <p>
+            JavaScript coordinates local WebAssembly image processing and ONNX
+            inference. The first download needs internet access; segmentation
+            stays on your device.
+          </p>
+          <h3>Which devices?</h3>
+          <p>
+            Start with a current desktop browser and at least 8 GB of RAM. GPU
+            support varies; the CPU fallback can take several minutes. Phones,
+            large scans and low-memory devices may not finish.
+          </p>
+        </div>
+        <div>
+          <h3>Privacy without a cookie banner</h3>
+          <p>
+            This app uses no cookies, analytics, accounts or scan storage.
+            Ordinary website requests still reach the hosting provider; MRI data
+            and results do not.
+          </p>
+          <a href="/privacy.html">Read the privacy &amp; cookies notice →</a>
+          <h3>Research use</h3>
+          <p>
+            Inspect results carefully. An unexpected or empty segmentation is
+            not a medical finding. For batch work, use the
+            <a href="https://github.com/MS-PINPOINT/mindGlide"
+              >local Python tool</a
+            >.
+          </p>
+        </div>
+      </section>
+      <section
+        class="regions wrap"
+        id="regions"
+        hidden
+        aria-labelledby="regions-heading"
+      >
+        <div class="regions-heading">
+          <h2 id="regions-heading">Regional volumes</h2>
+          <p>On the original MRI grid · mL · research output</p>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th scope="col">Label</th>
+                <th scope="col">Region</th>
+                <th scope="col">Volume (mL)</th>
+              </tr>
+            </thead>
+            <tbody id="volume-rows"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+    <footer class="wrap">
+      <span>MindGlide · MS-PINPOINT</span>
+      <div>
+        <a href="/privacy.html">Privacy &amp; cookies</a
+        ><a href="/attribution.html">Model &amp; attribution</a
+        ><a href="https://www.ms-pinpoint.com">MS-PINPOINT ↗</a>
+      </div>
+    </footer>
+    <noscript
+      ><p class="wrap">
+        Enable JavaScript to run segmentation locally in this browser.
+      </p></noscript
+    >
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

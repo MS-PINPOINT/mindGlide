@@ -1,0 +1,30 @@
+{
+  "version": "browser-v1",
+  "source": {
+    "repo": "MS-PINPOINT/mindglide",
+    "revision": "a1969821c0a4a37ae54f649a9a0c6fd1b8a48e26",
+    "checkpoint": "_20240404_conjurer_trained_dice_7733.pt"
+  },
+  "precision": "float32",
+  "patch": [128, 128, 64],
+  "classes": 20,
+  "overlap": 0.5,
+  "model": {
+    "path": "model/mindglide-fp32-v1.onnx",
+    "url": "https://github.com/MS-PINPOINT/mindGlide/releases/download/v1.3.0/mindglide-fp32-v1.onnx",
+    "bytes": 123167936,
+    "sha256": "d3cd4dc3fabca3ed9244836133e1ba55d1be8e68be64a20d08a7dbcd1ddcb73c"
+  },
+  "importance": {
+    "path": "model/gaussian-f32-v1.bin",
+    "url": "https://github.com/MS-PINPOINT/mindGlide/releases/download/v1.3.0/gaussian-f32-v1.bin",
+    "bytes": 4194304,
+    "sha256": "27ec3f7840096b54840ac80f1e3676ed35b6262b9e80cf39692cf0724753ff05"
+  },
+  "example": {
+    "path": "example/mni152-t1-1mm.nii-gz.bin",
+    "url": "https://templateflow.s3.amazonaws.com/tpl-MNI152NLin2009cAsym/tpl-MNI152NLin2009cAsym_res-01_T1w.nii.gz",
+    "bytes": 13685075,
+    "sha256": "1f27aabea9f7183dc0c69dafa71e1787b921ca778d655d9c1bf302b273d5627a"
+  }
+}
