@@ -9,7 +9,8 @@ Built with **PyTorch + MONAI** | Trained on **>23,000** real-world scans | Publi
 
 [![PyPI](https://img.shields.io/pypi/v/mindglide?style=flat-square&color=blue)](https://pypi.org/project/mindglide/)
 [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/MS-PINPOINT/mindGlide/blob/main/examples/mindglide_quickstart.ipynb)
-[![CI](https://img.shields.io/github/actions/workflow/status/MS-PINPOINT/mindGlide/ci.yml?style=flat-square&logo=github)](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml)
+[![CI](https://img.shields.io/github/actions/workflow/status/MS-PINPOINT/mindGlide/ci.yml?branch=main&event=push&style=flat-square&logo=githubactions&logoColor=white)](https://github.com/MS-PINPOINT/mindGlide/actions/workflows/ci.yml?query=branch%3Amain+event%3Apush)
+[![Local browser app](https://img.shields.io/badge/Browser-on%20your%20device-20bfa9?style=flat-square&logo=googlechrome&logoColor=white)](https://mindglide.ms-pinpoint.com)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=flat-square)](https://github.com/MS-PINPOINT/mindGlide/blob/main/LICENSE)
 [![Python ≥3.9](https://img.shields.io/badge/Python-%E2%89%A53.9-blue.svg?style=flat-square&logo=python&logoColor=white)](https://github.com/MS-PINPOINT/mindGlide)
 [![DOI](https://img.shields.io/badge/DOI-10.1038%2Fs41467--025--58274--8-blue?style=flat-square)](https://doi.org/10.1038/s41467-025-58274-8)
