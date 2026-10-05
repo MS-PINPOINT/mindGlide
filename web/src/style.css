@@ -485,9 +485,9 @@ input[type="range"] {
 }
 .below {
   display: grid;
-  grid-template-columns: 1.15fr 1fr 1fr;
+  grid-template-columns: 1fr;
   gap: 55px;
-  padding: 54px 0;
+  padding: 32px 0;
   border-bottom: 1px solid var(--border);
 }
 .below h2 {

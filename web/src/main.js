@@ -111,7 +111,7 @@ async function boot() {
   controls();
   const thisGeneration = ++generation;
   $("engine-badge").textContent = "Preparing…";
-  status("Downloading public engine assets. No MRI is selected yet.", null);
+  status("Downloading the public model…", null);
   try {
     const manifest = await (
       await fetch("/model/manifest.json", {
@@ -120,7 +120,7 @@ async function boot() {
       })
     ).json();
     $("download-size").textContent =
-      `Public model: ${Math.ceil(manifest.model.bytes / 1048576)} MB, plus image-processing libraries. The browser may cache these public files.`;
+      `Model: ${Math.ceil(manifest.model.bytes / 1048576)} MB, plus processing libraries.`;
     const response = await fetch(`/${manifest.example.path}`, {
       credentials: "omit",
       redirect: "error",
@@ -151,13 +151,13 @@ async function boot() {
         $("engine-badge").textContent = "Local engine ready";
         $("backend").textContent =
           data.backend === "GPU"
-            ? "GPU accelerated · FP32"
-            : `Local CPU · ${data.threads} thread${data.threads === 1 ? "" : "s"} · FP32`;
+            ? "Local GPU"
+            : `Local CPU · ${data.threads} thread${data.threads === 1 ? "" : "s"}`;
         $("step-engine").classList.remove("active");
         $("step-engine").classList.add("complete");
         $("step-scan").classList.add("active");
         status(
-          "Engine ready. Network access is now disabled for processing. Choose a local MRI or the public example.",
+          "Ready. Add an MRI or try the example. Processing stays local.",
         );
       }
       if (data.type === "scan-ready") {
@@ -171,9 +171,7 @@ async function boot() {
           $("step-scan").classList.add("complete");
           $("step-run").classList.add("active");
           $("view-state").textContent = "Original MRI · local";
-          status(
-            "Your MRI is ready. Review the research-use note, then start local segmentation.",
-          );
+          status("MRI ready. Confirm research use, then segment.");
         } catch {
           status(
             "The scan was prepared, but this browser could not display it. Try a current desktop browser.",
@@ -213,7 +211,7 @@ async function boot() {
               : `${Math.round(result.seconds)} sec`;
           $("result-summary").textContent = result.empty
             ? "No foreground was found. Check the input and inspect the result; this is not a medical finding."
-            : `Finished in ${time} on your ${result.backend}. Overlay and exports use your MRI’s original grid.`;
+            : `Finished in ${time} · ${result.backend}`;
           $("volume-rows").replaceChildren();
           labels.slice(1).forEach((name, index) => {
             const code = index + 1;
@@ -236,9 +234,7 @@ async function boot() {
           $("regions").hidden = false;
           $("step-run").classList.remove("active");
           $("step-run").classList.add("complete");
-          status(
-            "Segmentation complete. Explore the overlay or download your local results.",
-          );
+          status("Complete. View or save your results.");
         } catch {
           status(
             "Segmentation finished, but the overlay could not be displayed. You can download the local NIfTI result.",
