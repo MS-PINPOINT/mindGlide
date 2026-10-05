@@ -1,0 +1,20 @@
+{
+  "name": "mindglide-browser",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "prepare:assets": "node scripts/prepare-assets.mjs",
+    "build": "npm run prepare:assets && vite build && node scripts/check-static.mjs",
+    "test": "node --test tests/*.test.mjs",
+    "preview": "vite preview --host 127.0.0.1"
+  },
+  "dependencies": {
+    "@niivue/niivue": "0.69.0",
+    "onnxruntime-web": "1.30.0"
+  },
+  "devDependencies": {
+    "vite": "7.3.6"
+  }
+}

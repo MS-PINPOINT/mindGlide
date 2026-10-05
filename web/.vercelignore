@@ -1,0 +1,15 @@
+node_modules
+.env*
+dist
+public/runtime
+public/model/*.onnx
+public/model/*.bin
+public/model/manifest.json
+public/example/*.nii*
+validation-data
+tests
+.venv
+__pycache__
+scripts/export_model.py
+scripts/validate_scientific.py
+scripts/browser-validation.mjs

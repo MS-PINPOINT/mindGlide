@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <meta
+      name="description"
+      content="How MindGlide browser segmentation keeps MRI data local, and what website hosting requests reveal."
+    />
+    <link rel="stylesheet" href="/base.css" />
+    <link rel="icon" href="/favicon.svg" />
+    <title>Privacy and cookies | MindGlide</title>
+  </head>
+  <body class="document">
+    <a href="/">← MindGlide browser segmentation</a>
+    <main>
+      <h1>Privacy and cookies</h1>
+      <small>Browser edition · 5 October 2026</small>
+      <p>
+        <strong
+          >Your MRI is processed on your device. This app does not upload MRI
+          files, image contents, filenames, NIfTI headers, segmentations or
+          regional volumes to MS-PINPOINT or a third party.</strong
+        >
+      </p>
+      <h2>What happens when you choose a scan?</h2>
+      <p>
+        First, the app downloads the public model, image-processing libraries
+        and a public MNI example from this site. It checks the model and example
+        against their published SHA-256 hashes and starts a local processing
+        worker. File selection is enabled only after the engine is ready.
+        Network calls are then disabled in the app and processing worker.
+      </p>
+      <p>
+        Your chosen file is read into browser memory. Image preparation, model
+        inference, result recovery and display run locally using JavaScript and
+        WebAssembly, with GPU acceleration when supported. The app does not save
+        scans or results in cookies, local storage, IndexedDB, a service worker
+        or a server. Use the download buttons to save results yourself.
+      </p>
+      <p>
+        <strong>Clear &amp; reset</strong> stops the worker, releases viewer
+        volumes, clears the app’s scan buffers and reloads the page. Closing the
+        tab also ends the session. This is not a guarantee of forensic erasure
+        from device memory, browser crash files, operating-system swap or
+        software installed on your device.
+      </p>
+      <h2>Internet requests and hosting</h2>
+      <p>
+        Opening this site and downloading its public assets makes ordinary HTTPS
+        requests to Vercel, our hosting provider. Those requests reveal
+        connection metadata such as your IP address, browser request headers,
+        the requested public URL and request time. Vercel may process this
+        metadata for delivery, security and operational logging under its own
+        retention practices. These are website requests; they do not contain
+        your MRI or results.
+      </p>
+      <p>
+        The browser can cache public model and library files to reduce later
+        downloads. It does not cache MRI data through this app. All runtime
+        assets are served from this site; Hugging Face, GitHub, PyPI and
+        jsDelivr are build-time sources, not recipients of visitors’ scans.
+        Following an external research or GitHub link opens that provider’s
+        website and its privacy rules apply.
+      </p>
+      <h2>Cookies, storage and consent</h2>
+      <p>
+        This browser app sets no cookies, uses no analytics, advertising,
+        tracking pixels, third-party embeds, accounts or persistent identifiers,
+        and does not sell or share scan data. No non-essential storage or
+        tracking is enabled, so there is no cookie-consent banner to accept. The
+        public-asset HTTP cache is used to deliver the engine you request.
+      </p>
+      <p>
+        If optional analytics, cookies or tracking are introduced, this notice
+        and the app must change, with prior consent and a working
+        reject/withdraw option wherever required. A hosting platform does not
+        remove privacy obligations: the same approach applies whether this app
+        is hosted on Vercel or GitHub Pages.
+      </p>
+      <h2>Research use and your device</h2>
+      <p>
+        MindGlide is a research tool, not a diagnostic or treatment decision
+        tool. Use only scans you are authorised to process on the device you are
+        using. Browser extensions, a managed device, a compromised computer or
+        changes to this site’s software can affect local privacy; the app cannot
+        control them.
+      </p>
+      <h2>Contact and related notices</h2>
+      <p>
+        Questions or concerns about this app:
+        <a href="mailto:a.eshaghi@ucl.ac.uk">a.eshaghi@ucl.ac.uk</a>. Request
+        information about website request metadata through this contact;
+        MS-PINPOINT cannot retrieve a scan that was never sent to us. See
+        <a href="https://vercel.com/legal/privacy-policy"
+          >Vercel’s privacy policy</a
+        >,
+        <a href="https://vercel.com/docs/security/privacy-and-compliance"
+          >hosting privacy information</a
+        >
+        and the
+        <a href="https://www.ms-pinpoint.com/privacy"
+          >main MS-PINPOINT website notice</a
+        >. The main website has separate features and page-speed measurement;
+        this segmentation app does not include them.
+      </p>
+    </main>
+    <footer>
+      <a href="/attribution.html">Model &amp; attribution</a> ·
+      <a href="https://github.com/MS-PINPOINT/mindGlide/tree/main/web"
+        >Source code</a
+      >
+    </footer>
+  </body>
+</html>

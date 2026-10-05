@@ -1,0 +1,87 @@
+{
+  "phantoms": [
+    {
+      "name": "isotropic",
+      "preprocess_max_abs": 5.960464477539062e-07,
+      "recovery_agreement": 1.0
+    },
+    {
+      "name": "isotropic-flipped",
+      "preprocess_max_abs": 0.0,
+      "recovery_agreement": 1.0
+    },
+    {
+      "name": "resampled",
+      "preprocess_max_abs": 4.76837158203125e-07,
+      "recovery_agreement": 1.0
+    },
+    {
+      "name": "anisotropic",
+      "preprocess_max_abs": 3.5762786865234375e-07,
+      "recovery_agreement": 1.0
+    },
+    {
+      "name": "permuted",
+      "preprocess_max_abs": 4.76837158203125e-07,
+      "recovery_agreement": 1.0
+    }
+  ],
+  "invalid_rejected": [
+    "empty",
+    "constant",
+    "nonfinite",
+    "4d"
+  ],
+  "mni": {
+    "voxel_agreement": 0.9999989449029493,
+    "dice": {
+      "1": 0.9999918213454705,
+      "2": 1.0,
+      "3": 1.0,
+      "4": 1.0,
+      "5": 1.0,
+      "6": 0.9999971869734365,
+      "7": 1.0,
+      "8": 1.0,
+      "9": 1.0,
+      "10": 1.0,
+      "11": 1.0,
+      "12": 1.0,
+      "13": 0.9999968041009776,
+      "14": 0.9999908194048404,
+      "15": 1.0,
+      "16": 0.9999880941514503,
+      "17": 0.9999945671956407,
+      "18": 1.0,
+      "19": 1.0
+    },
+    "counts": [
+      6583214,
+      244539,
+      6497,
+      52554,
+      12622,
+      12533,
+      177745,
+      173606,
+      1051,
+      26554,
+      164,
+      10600,
+      27805,
+      625802,
+      272312,
+      70639,
+      125989,
+      92034,
+      1249,
+      12512
+    ],
+    "preprocess_max_abs": 0.0,
+    "patches": 54,
+    "pytorch_seconds": 4.50146949570626,
+    "onnx_seconds": 69.09997721808031,
+    "pytorch_device": "cuda"
+  },
+  "scope": "Public MNI template and generated phantoms; not clinical validation."
+}

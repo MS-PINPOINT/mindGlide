@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="referrer" content="no-referrer" />
+    <link rel="stylesheet" href="/base.css" />
+    <link rel="icon" href="/favicon.svg" />
+    <title>Model and attribution | MindGlide</title>
+  </head>
+  <body class="document">
+    <a href="/">← MindGlide browser segmentation</a>
+    <main>
+      <h1>Model and attribution</h1>
+      <p>
+        This browser edition derives from the public
+        <a href="https://github.com/MS-PINPOINT/mindGlide"
+          >MS-PINPOINT MindGlide project</a
+        >
+        and its
+        <a
+          href="https://huggingface.co/MS-PINPOINT/mindglide/tree/a1969821c0a4a37ae54f649a9a0c6fd1b8a48e26"
+          >pinned public checkpoint</a
+        >. The model is not retrained for the browser. It uses FP32 inference,
+        the original 128 × 128 × 64 patches, 1 mm working spacing, 50% overlap
+        and Gaussian blending.
+      </p>
+      <p>
+        Decoder transposed convolutions are rewritten as pointwise convolutions
+        and spatial shuffles to support browser GPU execution. The rewrite is
+        algebraically equivalent for this network’s non-overlapping upsampling
+        blocks; floating-point kernels can still produce small numerical
+        differences. Export and browser validation evidence is kept with the
+        source code.
+      </p>
+      <p>
+        Code is released under the repository’s
+        <a href="https://github.com/MS-PINPOINT/mindGlide/blob/main/LICENSE"
+          >MIT licence</a
+        >. The converted weights are derived from the existing public
+        checkpoint; this conversion does not assign a new licence to the
+        original weights. See the upstream project and model repository for
+        their terms.
+      </p>
+      <h2>Public example</h2>
+      <p>
+        The example is the ICBM 152 Nonlinear Asymmetrical template, version
+        2009c, 1 mm T1-weighted image, distributed by
+        <a href="https://github.com/templateflow/tpl-MNI152NLin2009cAsym"
+          >TemplateFlow</a
+        >. It is a public population template, not a visitor’s scan. Authors: V.
+        Fonov, A. C. Evans, K. Botteron, C. R. Almli, R. C. McKinstry and D. L.
+        Collins. See
+        <a href="https://doi.org/10.1016/j.neuroimage.2010.07.033"
+          >the template publication</a
+        >.
+      </p>
+      <p>
+        Copyright (C) 1993–2004 Louis Collins, McConnell Brain Imaging Centre,
+        Montreal Neurological Institute, McGill University.
+      </p>
+      <p>
+        Permission to use, copy, modify, and distribute this software and its
+        documentation for any purpose and without fee is hereby granted,
+        provided that the above copyright notice appear in all copies. The
+        authors and McGill University make no representations about the
+        suitability of this software for any purpose. It is provided “as is”
+        without express or implied warranty. The authors are not responsible for
+        any data loss, equipment damage, property loss, or injury to subjects or
+        patients resulting from the use or misuse of this software package.
+      </p>
+      <h2>Local processing libraries</h2>
+      <p>
+        ONNX Runtime Web 1.30.0 (MIT), NiiVue 0.69.0 (BSD-2-Clause), Pyodide
+        0.28.3 (MPL-2.0), NumPy (BSD), SciPy (BSD), scikit-image (BSD), and
+        NiBabel 5.3.2 (MIT). Transitive packages and exact public download
+        hashes are recorded in the source. Runtime distribution licence files
+        are included with the deployment.
+      </p>
+      <h2>Research</h2>
+      <p>
+        <a href="https://www.nature.com/articles/s41467-025-58274-8"
+          >MindGlide in Nature Communications</a
+        >. Model outputs need scientific quality control and are not a
+        substitute for clinical assessment.
+      </p>
+    </main>
+    <footer>
+      <a href="/privacy.html">Privacy &amp; cookies</a> ·
+      <a href="https://github.com/MS-PINPOINT/mindGlide">Source code</a>
+    </footer>
+  </body>
+</html>
